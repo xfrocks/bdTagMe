@@ -94,7 +94,7 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 							}
 							
 							
-							$this->taggeds[] = $tagged;
+							$this->taggeds[$tagged['user_id']] = $tagged;
 						}
 					}
 				}

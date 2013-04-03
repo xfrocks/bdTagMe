@@ -26,7 +26,6 @@
 			if (range.commonAncestorContainer) {
 				var fullText = range.commonAncestorContainer.textContent;
 			} else {
-				alert('fuck' + range);
 				// something is wrong
 				// we simply don't do anything
 				var fullText = '';
