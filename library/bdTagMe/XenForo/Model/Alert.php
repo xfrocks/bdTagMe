@@ -16,7 +16,7 @@ class bdTagMe_XenForo_Model_Alert extends XFCP_bdTagMe_XenForo_Model_Alert {
 			// sondh@2012-10-17
 			// support sending massive amount of alerts at once
 			$queueIndex = 0;
-			$perBatch = 1000; // TODO: option?
+			$perBatch = 200; // TODO: option?
 			$queueItemsCount = count(self::$_bdTagMe_batchQueue);
 			
 			while ($queueIndex < $queueItemsCount) {
