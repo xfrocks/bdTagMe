@@ -58,7 +58,7 @@ class bdTagMe_Listener {
 				break;
 			case 'editor_tinymce_init':
 				$search = 'plugins: plugins';
-				$replace = 'plugins: plugins + \',xenforo_bdtagme\'';
+				$replace = 'plugins: plugins + \',-xenforo_bdtagme\'';
 				
 				$contents = str_replace($search, $replace, $contents);
 				break;
