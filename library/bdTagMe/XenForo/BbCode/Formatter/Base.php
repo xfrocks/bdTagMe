@@ -8,7 +8,7 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 		
 		$tags = parent::getTags();
 		
-		$bbCodeTag = XenForo_Application::get('options')->bdtagme_mode_custom_tag;
+		$bbCodeTag = bdTagMe_Option::get('modeCustomTag');
 		if (!empty($bbCodeTag)) {
 			$bbCodeTag = strtolower($bbCodeTag);
 			$tags[$bbCodeTag] = array(
@@ -34,7 +34,7 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 				'userId' => $userId,
 				'userName' => $userName,
 				'link' => XenForo_Link::buildPublicLink('members', array('user_id' => $userId, 'username' => $userName)),
-				'removePrefix' => XenForo_Application::get('options')->bdtagme_remove_prefix,
+				'removePrefix' => bdTagMe_Option::get('removePrefix'),
 			));
 			return $template->render();
 		}

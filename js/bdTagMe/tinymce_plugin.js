@@ -6,9 +6,13 @@
 			this.$element = $(ed.getElement()).parent();
 			
 			this.symbol = '@';
-			// PLEASE UPDATE THE REGULAR EXPRESSION IN PHP IF YOU CHANGE IT HERE
-			// bdTagMe_DataWriter_DiscussionMessagePost::set()
-			this.regex = new RegExp(/[\s\(\)\[\]\.,!\?:;@]/);
+			// PLEASE UPDATE THE REGULAR EXPRESSION IN PHP IF YOU CHANGE IT HERE (3 PLACES)
+			this.regex = new RegExp(/[\s\(\)\[\]\.,!\?:;@\\\\]/);
+			
+			this.suggestionMaxLength = 0;
+			if (XenForo.bdTagMe_suggestionMaxLength) {
+				this.suggestionMaxLength = XenForo.bdTagMe_suggestionMaxLength;
+			}
 		},
 		
 		offset: function() {
@@ -41,7 +45,23 @@
 			// get the text after the last symbol
 			var lastIndexOfSymbol = text.lastIndexOf(this.symbol);
 			var tmp = text.substr(lastIndexOfSymbol + 1);
-			if (lastIndexOfSymbol > -1 && this.regex.test(tmp) == false) {
+			var valueFound = false;
+			
+			if (lastIndexOfSymbol > -1) {
+				if (this.suggestionMaxLength > 0) {
+					// there is maximum length, checks for it
+					if (text.length - lastIndexOfSymbol < this.suggestionMaxLength) {
+						valueFound = true;
+					}
+				} else {
+					// no maximum length, checks by regex
+					if (this.regex.test(tmp) == false) {
+						valueFound = true;
+					}
+				}
+			}
+				
+			if (valueFound) {
 				// something has been found!
 				value = tmp;
 				
@@ -73,8 +93,28 @@
 		}
 	};
 	
-	XenForo.bdTagMe_AutoComplete = function(ed) {
+	XenForo.bdTagMe_TinymceAutoComplete = function(ed) {
 		// copied from XenForo.AutoComplete.__construct
+		
+		// checks if the current root template is an enabled template
+		// since 1.3
+		if (XenForo.bdTagMe_enabledTemplates) {
+			var $pageContentNode = $('#content');
+			var pageTemplateTitle = $pageContentNode.attr('class');
+			var isEnabledTemplate = false;
+			
+			for (var i in XenForo.bdTagMe_enabledTemplates) {
+				if (pageTemplateTitle == XenForo.bdTagMe_enabledTemplates[i]) {
+					isEnabledTemplate = true;
+				}
+			}
+			
+			if (!isEnabledTemplate) {
+				// not enabled for this template
+				// do nothing now, bye bye
+				return;
+			} 
+		}
 		
 		this.$input = new XenForo.bdTagMe_EditorWrapper(ed);
 		this.ed = ed;
@@ -103,8 +143,8 @@
 
 		ed.onKeyDown.add($.context(this, 'edKeyDown'));
 	};
-	XenForo.bdTagMe_AutoComplete.prototype = XenForo.AutoComplete.prototype;
-	XenForo.bdTagMe_AutoComplete.prototype.edKeyDown = function(ed, e) {
+	XenForo.bdTagMe_TinymceAutoComplete.prototype = XenForo.AutoComplete.prototype;
+	XenForo.bdTagMe_TinymceAutoComplete.prototype.edKeyDown = function(ed, e) {
 		var code = e.keyCode || e.charCode, prevent = true;
 
 		switch(code)
@@ -123,16 +163,16 @@
 		
 		this.keystroke(e);
 	};
-	XenForo.bdTagMe_AutoComplete.prototype.getPartialValue = function() {
+	XenForo.bdTagMe_TinymceAutoComplete.prototype.getPartialValue = function() {
 		return this.$input.val();
 	};
-	XenForo.bdTagMe_AutoComplete.prototype.addValue = function(value) {
+	XenForo.bdTagMe_TinymceAutoComplete.prototype.addValue = function(value) {
 		return this.$input.val(value);
 	};
 	
 	tinymce.create('tinymce.plugins.XenForobdTagMe', {
 		init: function(ed, url) {
-			new XenForo.bdTagMe_AutoComplete(ed);
+			new XenForo.bdTagMe_TinymceAutoComplete(ed);
 		},
 		
 		getInfo: function() {
