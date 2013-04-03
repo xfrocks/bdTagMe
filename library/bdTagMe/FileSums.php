@@ -16,7 +16,7 @@ class bdTagMe_FileSums
   'library/bdTagMe/XenForo/Model/Post.php' => 'f7c762ab72a7c4f005c12221db8be246',
   'library/bdTagMe/XenForo/Model/ProfilePost.php' => '1dcb15c1b0c1f7841337427f563be7a1',
   'library/bdTagMe/XenForo/ViewPublic/Member/Post.php' => '5f31a5c7e4fc8f91fcc582b66662b622',
-  'js/bdTagMe/frontend.js' => 'fc57fb99e8f1be098a365bebf622e6ab',
+  'js/bdTagMe/frontend.js' => '5a398f9d4687f4407b86186fc2fd0de3',
   'js/bdTagMe/tinymce_plugin.js' => '21c7329565cbb7d35efe65817c09faf2',
 );
 	}

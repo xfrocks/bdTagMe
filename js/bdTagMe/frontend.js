@@ -44,6 +44,7 @@
 		
 		$textarea.unbind('keydown');
 		$textarea.keydown($.context(this, 'keystroke2'));
+		$textarea.blur($.context(this, 'blur'));
 	};
 	XenForo.bdTagMe_ProfilePostAutoComplete.prototype = XenForo.AutoComplete.prototype;
 	XenForo.bdTagMe_ProfilePostAutoComplete.prototype.keystroke2 = function(e) {
@@ -67,13 +68,15 @@
 		var result = this.keystroke(e);
 		
 		if (code == 13 && !resultsVisible) {
-			// XenForo.StatusEditor.prototype.preventNewLine
-			// we have to do this because we unbind'd it earlier
-			e.preventDefault();
+			if (this.$input.hasClass('StatusEditor')) {
+				// XenForo.StatusEditor.prototype.preventNewLine
+				// we have to do this because we unbind'd it earlier
+				e.preventDefault();
 
-			$(this.$input.get(0).form).submit();
+				$(this.$input.get(0).form).submit();
 
-			return false;
+				return false;
+			}
 		}
 		
 		return result;
@@ -136,9 +139,7 @@
 		}
 		
 		return value;
-	}
-	
-	
+	};
 	
 	XenForo.register('form.profilePoster textarea, textarea.StatusEditor, #ProfilePostList li .messageResponse textarea', 'XenForo.bdTagMe_ProfilePostAutoComplete');
 
