@@ -9,6 +9,8 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 			$found = array();
 			
 			do {
+				// PLEASE UPDATE THE REGULAR EXPRESSION IN JAVASCRIPT IF YOU CHANGE IT HERE
+				// js/bdTagMe/tinymce_plugin.js
 				if ($matched = preg_match('/(\s|^)@([^\s\(\)\[\]\.,!\?:;@]+)/', $value, $matches, PREG_OFFSET_CAPTURE,$offset)) {
 					$offset = $matches[2][1];
 					$text = strtolower($matches[2][0]);
@@ -120,10 +122,15 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 		// pushes alerts
 		if (!empty($this->taggeds)) {
 			$post = $this->getMergedData();
+			
+			$post['bdTagMe_alertQuotedMembers_useCache'] = true;
+			$quotedUserIds = $this->_getPostModel()->alertQuotedMembers($post);
+			
 			foreach ($this->taggeds as $tagged) {
 				if ($tagged['user_id'] == $post['post_id']) continue; // it's stupid to send alert to myself
 				
 				if (!$this->getModelFromCache('XenForo_Model_User')->isUserIgnored($tagged, $post['user_id'])
+					&& !in_array($tagged['user_id'], $quotedUserIds) // check for quoted user ids (and do not sending more alerts), since 1.2
 					&& XenForo_Model_Alert::userReceivesAlert($tagged, 'post', 'tagged')
 				) {
 					XenForo_Model_Alert::alert($tagged['user_id'],

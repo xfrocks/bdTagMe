@@ -12,6 +12,7 @@ class bdTagMe_Listener {
 		// I don't want to break people's site when this upgrade this add-on
 		static $classes = array(
 			'XenForo_BbCode_Formatter_Base',
+			'XenForo_Model_Post',
 		);
 		
 		if (in_array($class, $classes)) {
@@ -28,6 +29,8 @@ class bdTagMe_Listener {
 		
 		if ($templateName == 'account_alert_preferences') {
 			$template->preloadTemplate('bdtagme_account_alert_preferences');
+		} elseif ($templateName == 'editor') {
+			$template->preloadTemplate('bdtagme_editor');
 		}
 	}
 	
@@ -35,6 +38,18 @@ class bdTagMe_Listener {
 		if ($hookName == 'account_alerts_messages_in_threads') {
 			$ourTemplate = $template->create('bdtagme_account_alert_preferences', $template->getParams());
 			$contents .= $ourTemplate->render();
+		} elseif ($hookName == 'editor_tinymce_init') {
+			$search = 'plugins: plugins';
+			$replace = 'plugins: plugins + \',xenforo_bdtagme\'';
+			
+			$contents = str_replace($search, $replace, $contents);
+		}
+	}
+	
+	public static function template_post_render($templateName, &$content, array &$containerData, XenForo_Template_Abstract $template) {
+		if ($templateName == 'editor') {
+			$ourTemplate = $template->create('bdtagme_editor', $template->getParams());
+			$content .= $ourTemplate->render();
 		}
 	}
 }
