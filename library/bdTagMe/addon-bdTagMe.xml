@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6" version_id="29" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6.1-dev" version_id="30" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -29,13 +29,6 @@
   <email_templates/>
   <optiongroups>
     <group group_id="bdtagme" display_order="9999" debug_only="0"/>
-    <option option_id="bdtagme_max" edit_format="spinbox" data_type="unsigned_integer" can_backup="1">
-      <default_value>10</default_value>
-      <edit_format_params></edit_format_params>
-      <sub_options></sub_options>
-      <relation group_id="bdtagme" display_order="10"/>
-      <relation group_id="messageOptions" display_order="9999"/>
-    </option>
     <option option_id="bdtagme_mode" edit_format="radio" data_type="string" can_backup="1">
       <default_value>custom</default_value>
       <edit_format_params>custom = {xen:phrase bdtagme_mode_custom}
@@ -96,8 +89,6 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <phrase title="bdtagme_x_tagged_you_in_post_y" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in the post {title}]]></phrase>
     <phrase title="bdtagme_you_can_only_tag_x_people" version_id="8" version_string="1.2.3"><![CDATA[You can only tag {max} people. You have tagged {count} people, please remove some of them and try again...]]></phrase>
     <phrase title="bdtagme_you_have_no_permission_to_tag" version_id="25" version_string="1.5.9"><![CDATA[You don't have permission to tag people in messages.]]></phrase>
-    <phrase title="option_bdtagme_max" version_id="8" version_string="1.2.3"><![CDATA[Maximum Tags]]></phrase>
-    <phrase title="option_bdtagme_max_explain" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me: You can set a maximum tags in a message here. If the poster tagged too many people, he / she won't be able to submit. To set no limitation (which I don't recommend), just set it to zero (0).]]></phrase>
     <phrase title="option_bdtagme_mode" version_id="3" version_string="1.0"><![CDATA[Working Mode]]></phrase>
     <phrase title="option_bdtagme_mode_custom_tag" version_id="3" version_string="1.0"><![CDATA[BBCode Tag]]></phrase>
     <phrase title="option_bdtagme_mode_custom_tag_explain" version_id="3" version_string="1.0"><![CDATA[[bd] Tag Me: If you selected "Custom" working mode, you must specify a unique BBCode Tag for this add-on. Once setup, please don't change the tag unless you understand what you are doing...]]></phrase>
