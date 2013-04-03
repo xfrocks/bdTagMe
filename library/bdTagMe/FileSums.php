@@ -9,7 +9,7 @@ class bdTagMe_FileSums
   'library/bdTagMe/Listener.php' => '73472de36c01270acdf1ae84bc537c00',
   'library/bdTagMe/Option.php' => '0d4765444ee60acb421ee2f5dd017036',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',
-  'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => 'b11f64117a06eebc50dfc235e937a6c5',
+  'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => 'afa4696290b7fdbe722a0436d91b1c42',
   'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => '092b72b02dffa3d469ebb112b44b3536',
   'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/ProfilePost.php' => 'e6e816a1a15bbe2d355dd07c41ed6fea',
   'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => '34e3f6d5f478c4b8f7ae22ea2068da51',

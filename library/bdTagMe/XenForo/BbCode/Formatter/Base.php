@@ -30,13 +30,23 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 			// in that case, just return the user name...
 			return $userName;
 		} else {
-			$template = $this->_view->createTemplateObject('bdtagme_tag', array(
-				'userId' => $userId,
-				'userName' => $userName,
-				'link' => XenForo_Link::buildPublicLink('members', array('user_id' => $userId, 'username' => $userName)),
-				'removePrefix' => bdTagMe_Option::get('removePrefix'),
-			));
-			return $template->render();
+			if (!empty($this->_view)) {
+				// added check to make sure the view exists before we use it
+				// in some odd cases, the formatter may be created without a valid view...
+				$template = $this->_view->createTemplateObject('bdtagme_tag', array(
+					'userId' => $userId,
+					'userName' => $userName,
+					'link' => XenForo_Link::buildPublicLink('members', array('user_id' => $userId, 'username' => $userName)),
+					'removePrefix' => bdTagMe_Option::get('removePrefix'),
+				));
+				return $template->render();				
+			} else {
+				return ''
+					. (bdTagMe_Option::get('removePrefix') ? '' : '@')
+					. '<a href="'
+					. XenForo_Link::buildPublicLink('members', array('user_id' => $userId, 'username' => $userName))
+					. '" class="username">' . htmlentities($userName) . '</a>';
+			}
 		}
 	}
 }
