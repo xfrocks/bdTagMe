@@ -132,12 +132,6 @@ class bdTagMe_Engine {
 		$options = XenForo_Application::mapMerge($defaultOptions, $options);
 		$this->_validateOptions($options);
 		
-		// early check for permission to tag
-		if ($options['max'] === 0) {
-			$errorInfo = array(self::ERROR_NO_PERMISSION_TO_TAG);
-			return false;
-		} 
-
 		// array to store all tagged users
 		$tagged = array();
 		$taggedUserIds = array();
@@ -154,17 +148,17 @@ class bdTagMe_Engine {
 					if (!empty($entitySafeText)) {
 						$this->_replacePortionInText($message, $entitySafeText, $offset, $entities[$entitySafeText], $options);
 						$tagged[$entitySafeText] = $entities[$entitySafeText];
-					}
-					
-					switch ($tagged[$entitySafeText]['entity_type']) {
-						case 'user':
-							$taggedUserIds[] = $tagged[$entitySafeText]['user']['user_id'];
-							break;
-						case 'user_group':
-							if (isset($tagged[$entitySafeText]['user_group']['userIds'])) {
-								$taggedUserIds = array_merge($taggedUserIds, $tagged[$entitySafeText]['user_group']['userIds']);
-							}
-							break;
+						
+						switch ($tagged[$entitySafeText]['entity_type']) {
+							case 'user':
+								$taggedUserIds[] = $tagged[$entitySafeText]['user']['user_id'];
+								break;
+							case 'user_group':
+								if (isset($tagged[$entitySafeText]['user_group']['userIds'])) {
+									$taggedUserIds = array_merge($taggedUserIds, $tagged[$entitySafeText]['user_group']['userIds']);
+								}
+								break;
+						}
 					}
 				}
 			}
@@ -175,6 +169,13 @@ class bdTagMe_Engine {
 		
 		if ($options['max'] != -1 AND $taggedUsersCount > $options['max']) {
 			// a limit is set and this message has exceeded that limit
+			
+			// check for permission to tag
+			if ($options['max'] === 0) {
+				$errorInfo = array(self::ERROR_NO_PERMISSION_TO_TAG);
+				return false;
+			} 
+			
 			$errorInfo = array(
 				self::ERROR_TOO_MANY_TAGGED,
 				array(
