@@ -226,6 +226,7 @@ if (typeof tinymce != 'undefined') {
 			this.resultsVisible = false;
 	
 			ed.onKeyDown.add($.context(this, 'edKeyDown'));
+			ed.onBeforeSetContent.add($.context(this, 'edBeforeSetContent'));
 		};
 		XenForo.bdTagMe_TinymceAutoComplete.prototype = $.extend(true, {}, XenForo.AutoComplete.prototype);
 		XenForo.bdTagMe_TinymceAutoComplete.prototype.edKeyDown = function(ed, e) {
@@ -246,6 +247,12 @@ if (typeof tinymce != 'undefined') {
 			}
 			
 			this.keystroke(e);
+		};
+		XenForo.bdTagMe_TinymceAutoComplete.prototype.edBeforeSetContent = function(ed, e) {
+			// always hide results if the editor content is set programmatically
+			// we should use onSetContent but for some unknown reasons, that event
+			// doesn't get fired properly so I'm using onBeforeSetContent for now
+			this.hideResults();
 		};
 		XenForo.bdTagMe_TinymceAutoComplete.prototype.getPartialValue = function() {
 			return this.$input.val();
