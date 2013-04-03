@@ -29,11 +29,13 @@ class bdTagMe_XenForo_ControllerPublic_Account extends XFCP_bdTagMe_XenForo_Cont
 	}
 	
 	public function bdTagMe_actionContactDetailsSave(XenForo_DataWriter_User $dw) {
-		$settings = $this->_input->filter(array(
-			'bdtagme_email' => XenForo_Input::UINT,
-		));
-		
-		$dw->bulkSet($settings);
+		if (bdTagMe_Option::get('alertEmail')) {
+			$settings = $this->_input->filter(array(
+				'bdtagme_email' => XenForo_Input::UINT,
+			));
+			
+			$dw->bulkSet($settings);
+		}
 		
 		unset($GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave']);
 	}
