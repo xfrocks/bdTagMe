@@ -86,7 +86,7 @@ class bdTagMe_Engine {
 		do {
 			// PLEASE UPDATE THE REGULAR EXPRESSION IN JAVASCRIPT IF YOU CHANGE IT HERE (3 PLACES)
 			if ($matched = preg_match(
-				'/(\s|^)@([^\s\(\)\[\]\.,!\?:;@\\\\]+)/',
+				'/(\s|^)@([^\s\(\)\.,!\?:;@\\\\]+)/',
 				$message,
 				$matches,
 				PREG_OFFSET_CAPTURE,

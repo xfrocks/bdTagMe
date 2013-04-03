@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.4.4.2" version_id="15" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="file_health_check" execute_order="10" callback_class="bdTagMe_Listener" callback_method="file_health_check" active="1" description=""/>
+    <listener event_id="init_dependencies" execute_order="10" callback_class="bdTagMe_Listener" callback_method="init_dependencies" active="1" description=""/>
+    <listener event_id="load_class_bb_code" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="load_class_model" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="load_class_view" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="template_create" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_create" active="1" description=""/>
+    <listener event_id="template_hook" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_hook" active="1" description=""/>
+    <listener event_id="template_post_render" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_post_render" active="1" description=""/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <optiongroups>
+    <group group_id="bdtagme" display_order="9999" debug_only="0"/>
+    <option option_id="bdtagme_max" edit_format="spinbox" data_type="unsigned_integer" can_backup="1">
+      <default_value>10</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="10"/>
+      <relation group_id="messageOptions" display_order="9999"/>
+    </option>
+    <option option_id="bdtagme_mode" edit_format="radio" data_type="string" can_backup="1">
+      <default_value>custom</default_value>
+      <edit_format_params>custom = {xen:phrase bdtagme_mode_custom}
+url = {xen:phrase bdtagme_mode_url}</edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="1000"/>
+      <relation group_id="messageOptions" display_order="9999"/>
+    </option>
+    <option option_id="bdtagme_mode_custom_tag" edit_format="textbox" data_type="string" can_backup="1">
+      <default_value>USER</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="1010"/>
+      <relation group_id="messageOptions" display_order="9999"/>
+    </option>
+    <option option_id="bdtagme_remove_prefix" edit_format="onoff" data_type="unsigned_integer" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="1020"/>
+      <relation group_id="messageOptions" display_order="9999"/>
+    </option>
+    <option option_id="bdtagme_suggestionMaxLength" edit_format="spinbox" data_type="unsigned_integer" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="10000"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="bdtagme_mode_custom" version_id="3" version_string="1.0"><![CDATA[Custom]]></phrase>
+    <phrase title="bdtagme_mode_url" version_id="3" version_string="1.0"><![CDATA[URL]]></phrase>
+    <phrase title="bdtagme_someone_tags_you_in_a_comment_on_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone comments on a profile post with you tagged]]></phrase>
+    <phrase title="bdtagme_someone_tags_you_in_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a profile post]]></phrase>
+    <phrase title="bdtagme_someone_tags_you_in_a_thread" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a thread]]></phrase>
+    <phrase title="bdtagme_tags_you" version_id="3" version_string="1.0"><![CDATA[Tags you]]></phrase>
+    <phrase title="bdtagme_tags_you_in_a_comment" version_id="9" version_string="1.4"><![CDATA[Tags you in a comment]]></phrase>
+    <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s profile page.]]></phrase>
+    <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s status.]]></phrase>
+    <phrase title="bdtagme_x_tagged_you_in_a_post_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>post</a> on {receiverUsername}'s profile page.]]></phrase>
+    <phrase title="bdtagme_x_tagged_you_in_a_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>status</a>.]]></phrase>
+    <phrase title="bdtagme_x_tagged_you_in_post_y" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in the post {title}]]></phrase>
+    <phrase title="bdtagme_you_can_only_tag_x_people" version_id="8" version_string="1.2.3"><![CDATA[You can only tag {max} people. You have tagged {count} people, please remove some of them and try again...]]></phrase>
+    <phrase title="option_bdtagme_max" version_id="8" version_string="1.2.3"><![CDATA[Maximum Tags]]></phrase>
+    <phrase title="option_bdtagme_max_explain" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me: You can set a maximum tags in a message here. If the poster tagged too many people, he / she won't be able to submit. To set no limitation (which I don't recommend), just set it to zero (0).]]></phrase>
+    <phrase title="option_bdtagme_mode" version_id="3" version_string="1.0"><![CDATA[Working Mode]]></phrase>
+    <phrase title="option_bdtagme_mode_custom_tag" version_id="3" version_string="1.0"><![CDATA[BBCode Tag]]></phrase>
+    <phrase title="option_bdtagme_mode_custom_tag_explain" version_id="3" version_string="1.0"><![CDATA[[bd] Tag Me: If you selected "Custom" working mode, you must specify a unique BBCode Tag for this add-on. Once setup, please don't change the tag unless you understand what you are doing...]]></phrase>
+    <phrase title="option_bdtagme_mode_explain" version_id="3" version_string="1.0"><![CDATA[[bd] Tag Me: Select how you want this add-on alter the post to display tagged users. The "Custom" mode will make the link customizable via template bdtagme_tag. The "URL" mode will make use of the standard [URL] BBCode.]]></phrase>
+    <phrase title="option_bdtagme_remove_prefix" version_id="2" version_string="beta 2"><![CDATA[Remove "@"]]></phrase>
+    <phrase title="option_bdtagme_remove_prefix_explain" version_id="2" version_string="beta 2"><![CDATA[[bd] Tag Me: Enable this option to automatically remove the "@" symbol after a successful tag.]]></phrase>
+    <phrase title="option_bdtagme_suggestionMaxLength" version_id="8" version_string="1.2.3"><![CDATA[Suggestion Maximum Length]]></phrase>
+    <phrase title="option_bdtagme_suggestionMaxLength_explain" version_id="8" version_string="1.2.3"><![CDATA[The javascript suggestion (for the WYSIWYG editor and standard editors) normally supports only single-word usernames. If you want it to support multi-word usernames, you can set the maximum length of suggestion here. The script will ignore word boundary and suggest username as long as the maximum length. To let it work as normal, set this option to zero (0).]]></phrase>
+    <phrase title="option_group_bdtagme" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me]]></phrase>
+    <phrase title="option_group_bdtagme_description" version_id="8" version_string="1.2.3"><![CDATA[]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates>
+    <template title="alert_post_tagged" version_id="8" version_string="1.2.3"><![CDATA[{xen:phrase bdtagme_x_tagged_you_in_post_y,
+	'username={xen:helper username, $user, 'subject'}',
+	'title=<a href="{xen:link posts, $content}" class="PopupItemLink">{xen:helper threadPrefix, $content}{$content.title}</a>'
+}]]></template>
+    <template title="alert_profile_post_comment_tagged" version_id="8" version_string="1.2.3"><![CDATA[<xen:if is="{$user.user_id} == {$content.profile_user_id}">
+	<xen:comment>This is a status</xen:comment>
+	{xen:phrase bdtagme_x_tagged_you_in_a_comment_on_y_status,
+		'username={xen:helper username, $user, 'subject'}',
+		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
+		'receiverUsername={$content.profile_username}'
+	}
+<xen:else />
+	<xen:comment>This is a profile post</xen:comment>
+	{xen:phrase bdtagme_x_tagged_you_in_a_comment_on_y_profile_page,
+		'username={xen:helper username, $user, 'subject'}',
+		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
+		'receiverUsername={$content.profile_username}'
+	}
+</xen:if>]]></template>
+    <template title="alert_profile_post_tagged" version_id="8" version_string="1.2.3"><![CDATA[<xen:if is="{$user.user_id} == {$content.profile_user_id}">
+	<xen:comment>This is a status</xen:comment>
+	{xen:phrase bdtagme_x_tagged_you_in_a_status,
+		'username={xen:helper username, $user, 'subject'}',
+		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"'
+	}
+<xen:elseif is="{$visitor.user_id} == {$content.profile_user_id}" />
+	<xen:comment>This is a profile message on the visitor's profile page.
+		Actually, this will never happen because the profile_post insert
+		alert will be sent first and our alert will be canceled</xen:comment>
+<xen:else />
+	<xen:comment>This is a profile message on someone else's profile page</xen:comment>
+	{xen:phrase bdtagme_x_tagged_you_in_a_post_on_y_profile_page,
+		'username={xen:helper username, $user, 'subject'}',
+		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
+		'receiverUsername={xen:helper username, {xen:array 'user_id={$content.profile_user_id}', 'username={$content.profile_username}'}}'
+	}
+</xen:if>]]></template>
+    <template title="bdtagme_account_alerts_messages_in_threads" version_id="9" version_string="1.4"><![CDATA[<li><input type="hidden" name="alertSet[post_tagged]" value="1" />
+	<label><input type="checkbox" value="1" name="alert[post_tagged]" {xen:checked "!{$alertOptOuts.post_tagged}"} /> {xen:phrase bdtagme_tags_you}</label>
+	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_thread}</p>
+</li>]]></template>
+    <template title="bdtagme_account_alerts_messages_on_profile_pages" version_id="9" version_string="1.4"><![CDATA[<li><input type="hidden" name="alertSet[profile_post_tagged]" value="1" />
+	<label><input type="checkbox" value="1" name="alert[profile_post_tagged]" {xen:checked "!{$alertOptOuts.profile_post_tagged}"} /> {xen:phrase bdtagme_tags_you}</label>
+	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_profile_post}</p>
+</li>
+<li><input type="hidden" name="alertSet[profile_post_comment_tagged]" value="1" />
+	<label><input type="checkbox" value="1" name="alert[profile_post_comment_tagged]" {xen:checked "!{$alertOptOuts.profile_post_comment_tagged}"} /> {xen:phrase bdtagme_tags_you_in_a_comment}</label>
+	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_comment_on_a_profile_post}</p>
+</li>]]></template>
+    <template title="bdtagme_editor" version_id="8" version_string="1.2.3"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
+<script type="text/javascript">
+!function($, window, document, _undefined) {
+	XenForo.bdTagMe_enabledTemplates = [
+		'post_edit',
+		'post_edit_inline', // this one is not needed actually
+		'thread_create',
+		'thread_view',
+		<xen:hook name="bdtagme_enabled_templates" />
+	];
+	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};
+} (jQuery, this, document);
+</script>]]></template>
+    <template title="bdtagme_member_view" version_id="8" version_string="1.2.3"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
+<script type="text/javascript">
+!function($, window, document, _undefined) {
+	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};
+} (jQuery, this, document);
+</script>]]></template>
+    <template title="bdtagme_tag" version_id="3" version_string="1.0"><![CDATA[{xen:if '!{$removePrefix}', '@'}<a href="{$link}" class="username">{$userName}</a>]]></template>
+  </templates>
+  <bb_code_media_sites/>
+</addon>
