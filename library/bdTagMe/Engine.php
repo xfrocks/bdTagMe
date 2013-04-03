@@ -2,7 +2,9 @@
 
 class bdTagMe_Engine {
 	
+	const ERROR_NO_PERMISSION_TO_TAG = 'no_permission_to_tag';
 	const ERROR_TOO_MANY_TAGGED = 'too_many_tagged';
+	const SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS = 'bdTagMe_taggableUserGroups';
 	
 	protected $_foundTagged = array();
 	
@@ -89,16 +91,36 @@ class bdTagMe_Engine {
 		return false;
 	}
 	
+	public function issueDwError(XenForo_DataWriter $dw, $messageField, $errorInfo) {
+		switch ($errorInfo[0]) {
+			case self::ERROR_NO_PERMISSION_TO_TAG:
+				$dw->error(new XenForo_Phrase('bdtagme_you_have_no_permission_to_tag'));
+				break;
+			case self::ERROR_TOO_MANY_TAGGED:
+				$dw->error(
+					new XenForo_Phrase('bdtagme_you_can_only_tag_x_people', $errorInfo[1]),
+					$messageField
+				);
+				break;
+		}
+	}
+	
 	public function searchTextForTagged($uniqueId, &$message, array $options = array(), &$errorInfo = null) {
 		// prepare options
 		$defaultOptions = array(
-			'max'           => 10,       // maximum tags in a message
+			'max'           => 10,       // maximum tags in a message, -1 means unlimited
 			'mode'          => 'custom', // working mode (url | custom | facebookAlike | dontChange)
 			'modeCustomTag' => 'USER',   // custom mode's tag
 			'removePrefix'  => true,     // remove prefix when render
 		);
 		$options = XenForo_Application::mapMerge($defaultOptions, $options);
 		$this->_validateOptions($options);
+		
+		// early check for permission to tag
+		if ($options['max'] === 0) {
+			$errorInfo = array(self::ERROR_NO_PERMISSION_TO_TAG);
+			return false;
+		} 
 
 		// array to store all tagged users
 		$tagged = array();
@@ -135,13 +157,13 @@ class bdTagMe_Engine {
 		$taggedUserIds = array_unique($taggedUserIds);
 		$taggedUsersCount = count($taggedUserIds);
 		
-		if (!empty($options['max']) AND $taggedUsersCount > $options['max']) {
+		if ($options['max'] != -1 AND $taggedUsersCount > $options['max']) {
 			// a limit is set and this message has exceeded that limit
 			$errorInfo = array(
 				self::ERROR_TOO_MANY_TAGGED,
 				array(
 					'max' => $options['max'],
-					'count' => count($tagged),
+					'count' => $taggedUsersCount,
 				)
 			);
 			return false;
@@ -347,7 +369,10 @@ class bdTagMe_Engine {
 						'user' => $record,
 					);
 					
-					$entities[$tmp['entity_safe_text']] = $tmp;
+					if (!isset($entities[$tmp['entity_safe_text']])) {
+						// do not overwrite existing entity
+						$entities[$tmp['entity_safe_text']] = $tmp;
+					}
 				}
 			}
 		}
@@ -399,6 +424,8 @@ class bdTagMe_Engine {
 		if ($options['mode'] == 'custom' && empty($options['modeCustomTag'])) {
 			$options['mode'] = 'url';
 		}
+		
+		$options['max'] = intval($options['max']);
 	}
 	
 	public function renderFacebookAlike($message, array $options = array()) {
@@ -497,14 +524,37 @@ class bdTagMe_Engine {
 	}
 	
 	public function getTaggableUserGroups() {
-		// return XenForo_Model::create('XenForo_Model_UserGroup')->getAllUserGroups();
-		return array(
-			array(
-				'user_group_id' => 2,
-				'title' => 'Registered',
-				'userIds' => array(2, 7),
-			)
-		);
+		$userGroups = XenForo_Application::getSimpleCacheData(self::SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS);
+		if (empty($userGroups)) $userGroups = array();
+		
+		return $userGroups;
+	}
+	
+	public function setTaggableUserGroup(array $userGroup, $isTaggable, XenForo_DataWriter_UserGroup $dw) {
+		$taggableUserGroups = $this->getTaggableUserGroups();
+		$isChanged = false;
+		
+		if ($isTaggable) {
+			// get users and update into the taggable list
+			$taggableUserGroups[$userGroup['user_group_id']] = array(
+				'user_group_id' => $userGroup['user_group_id'],
+				'title' => $userGroup['title'],
+				'userIds' => $dw->getModelFromCache('XenForo_Model_User')->bdTagMe_getUserIdsByUserGroupId($userGroup['user_group_id']),
+			);
+			$isChanged = true;
+		} else {
+			// unset this user group if needed
+			foreach (array_keys($taggableUserGroups) as $taggableUserGroupId) {
+				if ($taggableUserGroupId == $userGroup['user_group_id']) {
+					unset($taggableUserGroups[$taggableUserGroupId]);
+					$isChanged = true;
+				}
+			}
+		}
+		
+		if ($isChanged) {
+			XenForo_Application::setSimpleCacheData(self::SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS, $taggableUserGroups);
+		}
 	}
 	
 	public static function utf8_strrpos($haystack, $needle, $offset) {
@@ -539,6 +589,7 @@ class bdTagMe_Engine {
 		
 		if ($instance === false) {
 			$instance = new bdTagMe_Engine();
+			// TODO: support code event listeners?
 		}
 		
 		return $instance;

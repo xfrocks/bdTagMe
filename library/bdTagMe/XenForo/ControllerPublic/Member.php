@@ -2,6 +2,17 @@
 
 class bdTagMe_XenForo_ControllerPublic_Member extends XFCP_bdTagMe_XenForo_ControllerPublic_Member {
 	
+	public function actionIndex() {
+		$tagged = $this->_input->filterSingle('tagged', XenForo_Input::STRING);
+		
+		if (empty($tagged)) {
+			// this is not our request, let the parent handle it
+			return parent::actionIndex();
+		}
+		
+		
+	}
+	
 	public function actionTagSuggestions() {
 		$response = parent::actionFind();
 		

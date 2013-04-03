@@ -7,14 +7,17 @@ class bdTagMe_Listener {
 		static $classes = array(
 			'XenForo_BbCode_Formatter_Base',
 		
+			'XenForo_ControllerAdmin_UserGroup',
 			'XenForo_ControllerPublic_Member',
 		
 			'XenForo_DataWriter_DiscussionMessage_Post',
 			'XenForo_DataWriter_DiscussionMessage_ProfilePost',
 			'XenForo_DataWriter_ProfilePostComment',
+			'XenForo_DataWriter_UserGroup',
 		
 			'XenForo_Model_Post',
 			'XenForo_Model_ProfilePost',
+			'XenForo_Model_User',
 		
 			'XenForo_ViewPublic_Member_Post',
 		);
@@ -44,6 +47,7 @@ class bdTagMe_Listener {
 				$template->preloadTemplate('bdtagme_account_alerts_messages_on_profile_pages');
 				break;
 				
+			case 'user_group_edit': // admincp
 			case 'editor':
 			case 'PAGE_CONTAINER':
 				$template->preloadTemplate('bdtagme_' . $templateName);
@@ -74,6 +78,11 @@ class bdTagMe_Listener {
 	
 	public static function template_post_render($templateName, &$content, array &$containerData, XenForo_Template_Abstract $template) {
 		switch ($templateName) {
+			case 'user_group_edit': // admincp
+				$ourTemplate = $template->create('bdtagme_user_group_edit', $template->getParams());
+				$search = '<fieldset id="piGroups">'; // TODO: find better way to do this
+				$content = str_replace($search, $ourTemplate->render() . $search, $content);
+				break;
 			case 'editor':
 				$ourTemplate = $template->create('bdtagme_' . $templateName, $template->getParams());
 				$content .= $ourTemplate->render();

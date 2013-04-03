@@ -14,14 +14,7 @@ class bdTagMe_XenForo_DataWriter_ProfilePostComment extends XFCP_bdTagMe_XenForo
 			$errorInfo = false;
 			
 			if (!$engine->searchTextForTagged(self::BDTAGME_UNIQUE_ID, $value, $options, $errorInfo)) {
-				switch ($errorInfo[0]) {
-					case bdTagMe_Engine::ERROR_TOO_MANY_TAGGED:
-						$this->error(
-							new XenForo_Phrase('bdtagme_you_can_only_tag_x_people', $errorInfo[1]),
-							'message'
-						);
-						break;
-				}
+				$engine->issueDwError($this, 'message', $errorInfo);
 			}
 		}
 		
