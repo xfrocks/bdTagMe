@@ -235,7 +235,16 @@ class bdTagMe_Engine {
 			$prevCharIsGood = true;
 			if ($symbolOffset > 0) {
 				$prevChar = utf8_substr($message, $symbolOffset - 1, 1);
-				if (!preg_match(self::REGEX, $prevChar)) {
+				if (!preg_match(self::REGEX, $prevChar)
+				
+					// sondh@2013-01-23
+					// add special case for ']' when it is the previous character
+					// of the symbol character. Normally we accept ']' (and '[') as 
+					// a valid character in user names, that means ']' is considered
+					// a text-character. Assuming that works for user names with ']'
+					// but may cause problem when user use bbcode to wrap around @user
+					AND $prevChar !== ']'
+				) {
 					// the previous character is a text-character
 					// this portion may be part of an email address or something
 					$prevCharIsGood = false;
