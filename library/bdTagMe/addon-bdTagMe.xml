@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.4.4.2" version_id="15" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.5" version_id="16" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -140,7 +140,7 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 	<label><input type="checkbox" value="1" name="alert[profile_post_comment_tagged]" {xen:checked "!{$alertOptOuts.profile_post_comment_tagged}"} /> {xen:phrase bdtagme_tags_you_in_a_comment}</label>
 	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_comment_on_a_profile_post}</p>
 </li>]]></template>
-    <template title="bdtagme_editor" version_id="8" version_string="1.2.3"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
+    <template title="bdtagme_editor" version_id="15" version_string="1.4.4.2"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
 <script type="text/javascript">
 !function($, window, document, _undefined) {
 	XenForo.bdTagMe_enabledTemplates = [
@@ -150,10 +150,9 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 		'thread_view',
 		<xen:hook name="bdtagme_enabled_templates" />
 	];
-	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};
 } (jQuery, this, document);
 </script>]]></template>
-    <template title="bdtagme_member_view" version_id="8" version_string="1.2.3"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
+    <template title="bdtagme_PAGE_CONTAINER" version_id="15" version_string="1.4.4.2"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
 <script type="text/javascript">
 !function($, window, document, _undefined) {
 	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};

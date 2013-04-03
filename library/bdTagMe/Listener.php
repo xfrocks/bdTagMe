@@ -43,7 +43,7 @@ class bdTagMe_Listener {
 				break;
 				
 			case 'editor':
-			case 'member_view':
+			case 'PAGE_CONTAINER':
 				$template->preloadTemplate('bdtagme_' . $templateName);
 				break;
 		}
@@ -68,7 +68,7 @@ class bdTagMe_Listener {
 	public static function template_post_render($templateName, &$content, array &$containerData, XenForo_Template_Abstract $template) {
 		switch ($templateName) {
 			case 'editor':
-			case 'member_view':
+			case 'PAGE_CONTAINER':
 				$ourTemplate = $template->create('bdtagme_' . $templateName, $template->getParams());
 				$content .= $ourTemplate->render();
 				break;

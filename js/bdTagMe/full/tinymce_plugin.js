@@ -14,6 +14,8 @@ if (typeof tinymce != 'undefined') {
 				if (XenForo.bdTagMe_suggestionMaxLength) {
 					this.suggestionMaxLength = XenForo.bdTagMe_suggestionMaxLength;
 				}
+				
+				this.savedRange = false;
 			},
 			
 			offset: function() {
@@ -24,24 +26,102 @@ if (typeof tinymce != 'undefined') {
 				return this.$element.parents();
 			},
 			
-			val: function(newValue) {
-				var content = this.ed.getContent();
-				var selection = this.ed.selection;
-				var range = selection.getRng();
-				if (range.commonAncestorContainer) {
-					var fullText = range.commonAncestorContainer.textContent;
+			outerHeight: function() {
+				return this.$element.outerHeight();
+			},
+			
+			outerWidth: function() {
+				return this.$element.outerWidth();
+			},
+			
+			focus: function() {
+				this.ed.focus();
+			},
+			
+			getRange: function() {
+				var win = this.ed.getWin();
+				return (!window.opera && document.all) ?
+						win.document.selection.createRange() :
+						win.getSelection().getRangeAt(0);
+			},
+			
+			checkRange: function(range, offset) {
+				var latestRange = this.getRange();
+				var win = this.ed.getWin();
+				
+				if (!window.opera && document.all) {
+					if (latestRange.isEqual(range)) {
+						// good range
+					} else {
+						range.select();
+					}
 				} else {
-					// something is wrong
-					// we simply don't do anything
-					var fullText = '';
+					if (latestRange.startOffset == range.startOffset && latestRange.endOffset == range.endOffset) {
+						// good range
+					} else {					
+						var selection = win.getSelection();
+						selection.removeAllRanges();
+						selection.addRange(range);
+					}
 				}
+			},
+			
+			saveRange: function() {
+				this.resetRange();
+				this.savedRange = this.getRange();
+			},
+			
+			resetRange: function() {
+				this.savedRange = false;
+			},
+			
+			getFullTextFromRange: function(range) {
+				var fullText = '';
+
+				if (!window.opera && document.all) {
+					var c = 0;
+					while (range.moveStart('character', -1) == -1) {
+						c++;
+						if (range.text.charAt(0) == '@') break;
+					}
+					
+					fullText = range.text;
+					range.moveStart('character', c); // revert all the move
+				} else {
+					var s;
+					if (!(s = range.startContainer.nodeValue)) {
+						fullText = '';
+					} else {
+						var c = range.startOffset - 1;
+						if (c > 0) {
+							while (c >= 0) {
+								fullText = s.charAt(c) + fullText;
+								if (s.charAt(c) == '@') break;
+								
+								c = c - 1;
+							}
+						}
+					}
+				}
+				
+				return fullText;
+			},
+			
+			val: function(newValue) {
+				var fullText = '';
+				var range = this.getRange();
+
+				if (range) {
+					fullText = this.getFullTextFromRange(range);
+				}
+				if (fullText.length == 0 && this.savedRange) {
+					this.focus(); // this is required or the range will be invalid
+					range = this.savedRange;
+					fullText = this.getFullTextFromRange(range);
+				}
+
 				var text = fullText;
 				var value = '';
-				
-				if (fullText.length > range.startOffset) {
-					// ignore the text after the cursor
-					text = fullText.substr(0, range.startOffset);
-				}
 				
 				// get the text after the last symbol
 				var lastIndexOfSymbol = text.lastIndexOf(this.symbol);
@@ -61,36 +141,39 @@ if (typeof tinymce != 'undefined') {
 						}
 					}
 				}
-					
+				
 				if (valueFound) {
 					// something has been found!
 					value = tmp;
 					
 					if (typeof newValue != 'undefined') {
-						var newText = text.substr(0, lastIndexOfSymbol + 1) + newValue;
-						var newFullText = newText;
+						// range = this.getRange();
 						
-						if (fullText.length > range.startOffset) {
-							// text is a portion of fullText so we have to concat it all over again
-							newFullText = newText + ' ' + fullText.substr(range.startOffset);
+						if (!window.opera && document.all) {
+							var x = -1 * tmp.length;
+							range.moveStart('character', x);
+							range.moveEnd('character', x + value.length);
+							range.pasteHTML(newValue);
+							
+							this.checkRange(range, x + newValue.length);
+						} else {
+							var container = range.startContainer;
+							var start = range.startOffset - value.length;
+							var offset = start + newValue.length;
+							
+							container.nodeValue = container.nodeValue.substr(0, start)
+								+ newValue
+								+ container.nodeValue.substr(range.startOffset);
+							
+							range.setEnd(container, offset);
+							range.setStart(container, offset);
+							
+							this.checkRange(range, offset);
 						}
-						
-						range.commonAncestorContainer.textContent = newFullText;
-						this.ed.selection.select(range.startContainer, true);
-						this.ed.selection.collapse(false);
-						this.ed.focus();
 					}
 				}
 				
 				return value;
-			},
-			
-			outerHeight: function() {
-				return this.$element.outerHeight();
-			},
-			
-			outerWidth: function() {
-				return this.$element.outerWidth();
 			}
 		};
 		
@@ -169,6 +252,18 @@ if (typeof tinymce != 'undefined') {
 		};
 		XenForo.bdTagMe_TinymceAutoComplete.prototype.addValue = function(value) {
 			return this.$input.val(value);
+		};
+		
+		var showResultsOrig = XenForo.bdTagMe_TinymceAutoComplete.prototype.showResults;
+		XenForo.bdTagMe_TinymceAutoComplete.prototype.showResults = function(results) {
+			this.$input.saveRange();
+			showResultsOrig.call(this, results);
+		};
+		
+		var hideResultsOrig = XenForo.bdTagMe_TinymceAutoComplete.prototype.hideResults;
+		XenForo.bdTagMe_TinymceAutoComplete.prototype.hideResults = function() {
+			hideResultsOrig.call(this);
+			this.$input.resetRange();
 		};
 		
 		tinymce.create('tinymce.plugins.XenForobdTagMe', {

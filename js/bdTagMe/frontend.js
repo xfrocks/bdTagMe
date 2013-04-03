@@ -6,5 +6,5 @@ return result;};XenForo.bdTagMe_ProfilePostAutoComplete.prototype.getPartialValu
 var lastIndexOfSymbol=text.lastIndexOf(this.symbol);var tmp=text.substr(lastIndexOfSymbol+1);var valueFound=false;if(lastIndexOfSymbol>-1){if(this.suggestionMaxLength>0){if(text.length-lastIndexOfSymbol<this.suggestionMaxLength){valueFound=true;}}else{if(this.regex.test(tmp)==false){valueFound=true;}}}
 if(valueFound){value=tmp;if(typeof newValue!='undefined'){var newText=text.substr(0,lastIndexOfSymbol+1)+newValue;var newFullText=newText;if(fullText.length>startOffset){newFullText=newText+' '+fullText.substr(startOffset);}
 this.$input.val(newFullText);this.textarea.selectionStart=lastIndexOfSymbol+1+newValue.length;}}
-return value;};XenForo.register('form.profilePoster textarea, textarea.StatusEditor, #ProfilePostList li .messageResponse textarea','XenForo.bdTagMe_ProfilePostAutoComplete');}
+return value;};XenForo.register('form.profilePoster textarea, textarea.StatusEditor, #ProfilePostList li .messageResponse textarea','XenForo.bdTagMe_ProfilePostAutoComplete');XenForo.register('#content.thread_view .quickReply.message textarea','XenForo.bdTagMe_ProfilePostAutoComplete');}
 (jQuery,this,document);

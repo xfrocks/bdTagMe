@@ -142,6 +142,7 @@
 	};
 	
 	XenForo.register('form.profilePoster textarea, textarea.StatusEditor, #ProfilePostList li .messageResponse textarea', 'XenForo.bdTagMe_ProfilePostAutoComplete');
+	XenForo.register('#content.thread_view .quickReply.message textarea', 'XenForo.bdTagMe_ProfilePostAutoComplete');
 
 }
 (jQuery, this, document);

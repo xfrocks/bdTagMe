@@ -86,7 +86,7 @@ class bdTagMe_Engine {
 		do {
 			// PLEASE UPDATE THE REGULAR EXPRESSION IN JAVASCRIPT IF YOU CHANGE IT HERE (3 PLACES)
 			if ($matched = preg_match(
-				'/(\s|^)@([^\s\(\)\.,!\?:;@\\\\]+)/',
+				'/(\s|^|\])@([^\s\(\)\.,!\?:;@\\\\]+)/',
 				$message,
 				$matches,
 				PREG_OFFSET_CAPTURE,
@@ -100,11 +100,22 @@ class bdTagMe_Engine {
 					// 2. (to be added)
 					
 					$text = strtolower(trim($matches[2][0])); // normalize it a little bit
+					
+					// we removed [ and ] from the 2nd group in the regular expression
+					// that will cause problem if somebody use [b]@username[/b]
+					// we will now once again look for the '[' character and try to remove it
+					$stupidCharacterPos = strpos($text, '[');
+					if ($stupidCharacterPos !== false AND $stupidCharacterPos > 0) {
+						// important: only remove it if it's not the first character!
+						// this is very important because if we remove it when it's the first character
+						// all those "[GANGSER] username" will become un-tag-able
+						$text = substr($text, 0, $stupidCharacterPos);
+					}
+					
 					$found[$offset] = $text; // please note: this offset doesn't include the prefix '@'
 				}
 			}
 		} while ($matched);
-		
 		// it's easier to process found portions backward
 		// (the offset of them won't be changed after search and replace for example)
 		// so we are doing it here
