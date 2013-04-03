@@ -6,8 +6,11 @@ if (typeof tinymce != 'undefined') {
 				this.ed = ed;
 				this.$element = $(ed.getElement()).parent();
 				
+				// PLEASE UPDATE THE SYMBOL AND REGEX IF YOU CHANGE IT HERE. THE 3 PLACES ARE:
+				// xenforo/js/bdTagMe/full/frontend.js
+				// xenforo/js/bdTagMe/full/tinymce_plugin.js
+				// xenforo/library/bdTagMe/Engine.php
 				this.symbol = '@';
-				// PLEASE UPDATE THE REGULAR EXPRESSION IN PHP IF YOU CHANGE IT HERE (3 PLACES)
 				this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\{}]/);
 				
 				this.suggestionMaxLength = 0;

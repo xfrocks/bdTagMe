@@ -135,10 +135,14 @@ class bdTagMe_Engine {
 	public function searchTextForTagged($uniqueId, &$message, array $options = array(), &$errorInfo = null) {
 		// prepare options
 		$defaultOptions = array(
-			'max'           => 10,       // maximum tags in a message, -1 means unlimited
-			'mode'          => 'custom', // working mode (url | custom | facebookAlike | dontChange)
-			'modeCustomTag' => 'USER',   // custom mode's tag
-			'removePrefix'  => true,     // remove prefix when render
+			'max'           		=> 10,			// maximum tags in a message, -1 means unlimited
+			'mode'          		=> 'custom',	// working mode (url | custom | facebookAlike | dontChange)
+			'modeCustomTag' 		=> 'USER',		// custom mode's tag
+			'removePrefix'  		=> true,		// remove prefix when render
+		
+			// sondh@2012-11-05
+			// added to support large sites
+			'maxUsersPerPortion' 	=> 0,			// maximum number of users to query from db (0 means no limit)			
 		);
 		$options = XenForo_Application::mapMerge($defaultOptions, $options);
 		$this->_validateOptions($options);
@@ -150,7 +154,7 @@ class bdTagMe_Engine {
 		$foundPortions = $this->_searchTextForPortions($message, $options);
 		
 		if (!empty($foundPortions)) {
-			$entities = $this->_getEntitiesByPortions($foundPortions);
+			$entities = $this->_getEntitiesByPortions($foundPortions, $options);
 			
 			if (!empty($entities)) {
 				foreach ($foundPortions as $offset => $portion) {
@@ -383,7 +387,7 @@ class bdTagMe_Engine {
 		return false;
 	}
 	
-	protected function _getEntitiesByPortions(array $portions) {
+	protected function _getEntitiesByPortions(array $portions, array &$options) {
 		$db = XenForo_Application::get('db');
 		$entities = array();
 		
@@ -415,6 +419,15 @@ class bdTagMe_Engine {
 				INNER JOIN `xf_user_option` AS user_option ON (user_option.user_id = user.user_id)
 				INNER JOIN `xf_user_profile` AS user_profile ON (user_profile.user_id = user.user_id)
 				WHERE ' . implode(' OR ', $conditions)
+				. (
+					$options['maxUsersPerPortion'] > 0 ?
+					'
+						AND user_state = \'valid\'
+					ORDER BY last_activity DESC
+					LIMIT ' . ($options['maxUsersPerPortion'] * count($portions)) . '
+					'
+					:''
+				)
 			);
 			
 			if (!empty($records)) {

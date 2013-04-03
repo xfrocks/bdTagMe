@@ -5,16 +5,16 @@ class bdTagMe_FileSums
 	public static function getHashes()
 	{
 		return array (
-  'library/bdTagMe/Engine.php' => '9405211062290661e8f0c42e343f8ea9',
+  'library/bdTagMe/Engine.php' => '350d64897debff46f71a2aadf6077ad1',
   'library/bdTagMe/Listener.php' => '8be8d3518c8e15a00f2e399ff16af98b',
   'library/bdTagMe/Option.php' => '345a57139d4c4f4553114471aa2478c2',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',
   'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => '6e464def28274f7ff0ec81e699394af2',
   'library/bdTagMe/XenForo/ControllerAdmin/UserGroup.php' => '3d27724080d9ee0aca1e2fc89b498f15',
   'library/bdTagMe/XenForo/ControllerPublic/Member.php' => '779bb81c39b89bd6d389dc637ff94fcd',
-  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => 'f438c183e1902881090d0fae0ee1e177',
-  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/ProfilePost.php' => '2e52bfbf0f0b1b74d58b8558cedb9bc1',
-  'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => '9ae752a56a991a3c10c3a678d1efbcb5',
+  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => '586c6cd18b47862ac57fb02f0e2e3f83',
+  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/ProfilePost.php' => '61e7e117e53e6718d878d9e4d3f3094e',
+  'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => '80d47f52624b69b13fd35d09024d374e',
   'library/bdTagMe/XenForo/DataWriter/User.php' => 'e84bd33415814c6e0eaa671c9e234ae9',
   'library/bdTagMe/XenForo/DataWriter/UserGroup.php' => '0d3e64c97ee6a172587853fc1be5d812',
   'library/bdTagMe/XenForo/Model/Alert.php' => 'c131537951bc5c46442de2f6e62c59f1',

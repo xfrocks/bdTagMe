@@ -12,8 +12,9 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 		) {
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
-				'max'          => bdTagMe_Option::get('max'),
-				'mode'         => 'facebookAlike',
+				'max'					=> bdTagMe_Option::get('max'),
+				'mode'					=> 'facebookAlike',
+				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
 			);
 			$errorInfo = false;
 			

@@ -8,8 +8,9 @@ class bdTagMe_XenForo_DataWriter_ProfilePostComment extends XFCP_bdTagMe_XenForo
 		if ($field == 'message') {
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
-				'max'           => bdTagMe_Option::get('max'),
-				'mode'          => 'facebookAlike',
+				'max'					=> bdTagMe_Option::get('max'),
+				'mode'					=> 'facebookAlike',
+				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
 			);
 			$errorInfo = false;
 			

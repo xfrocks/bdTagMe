@@ -8,10 +8,11 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
 		if ($field == 'message') {
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
-				'max'           => bdTagMe_Option::get('max'),
-				'mode'          => bdTagMe_Option::get('mode'),
-				'modeCustomTag' => bdTagMe_Option::get('modeCustomTag'),
-				'removePrefix'  => bdTagMe_Option::get('removePrefix'),
+				'max'					=> bdTagMe_Option::get('max'),
+				'mode'					=> bdTagMe_Option::get('mode'),
+				'modeCustomTag'			=> bdTagMe_Option::get('modeCustomTag'),
+				'removePrefix'  		=> bdTagMe_Option::get('removePrefix'),
+				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
 			);
 			$errorInfo = false;
 			
