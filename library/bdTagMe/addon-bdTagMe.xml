@@ -208,8 +208,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 } (jQuery, this, document);
 </script>
 </xen:if>]]></template>
-    <template title="bdtagme_tag" version_id="27" version_string="1.6-dev"><![CDATA[<xen:comment>It's important to NOT break line in this template. You have been warned!</xen:comment>
-<xen:if is="{$entity.entity_type} == 'user'">{xen:if '!{$removePrefix}', '@'}<a href="{xen:link members, {xen:array 'user_id={$entity.entity_id}', 'username={$entity.entity_text}'}}" class="username bdTagMe_TaggedUser">{$entity.entity_text}</a><xen:elseif is="{$entity.entity_type} == 'user_group'" />{xen:if '!{$removePrefix}', '@'}<a href="{xen:link 'members/tagged', $entity}" class="OverlayTrigger bdTagMe_TaggedUserGroup">{$entity.entity_text}</a><xen:else />{xen:if '!{$removePrefix}', '@'}{$entity.entity_text}</xen:if>]]></template>
+    <template title="bdtagme_tag" version_id="40" version_string="1.6.6"><![CDATA[<xen:comment>It's important to NOT break line in this template. You have been warned!</xen:comment>
+{xen:if '!{$removePrefix}', '@'}<xen:if is="{$entity.entity_link}">{xen:raw $entity.entity_link}<xen:else /><xen:if is="{$entity.entity_type} == 'user'"><a href="{xen:link members, {xen:array 'user_id={$entity.entity_id}', 'username={$entity.entity_text}'}}" class="username bdTagMe_TaggedUser">{$entity.entity_text}</a><xen:elseif is="{$entity.entity_type} == 'user_group'" /><a href="{xen:link 'members/tagged', $entity}" class="OverlayTrigger bdTagMe_TaggedUserGroup">{$entity.entity_text}</a><xen:else />{$entity.entity_text}</xen:if></xen:if>]]></template>
   </templates>
   <bb_code_media_sites/>
 </addon>

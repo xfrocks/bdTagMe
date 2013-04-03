@@ -187,11 +187,13 @@ if (typeof tinymce != 'undefined') {
 			// since 1.3
 			if (XenForo.bdTagMe_enabledTemplates) {
 				var $pageContentNode = $('#content');
-				var pageTemplateTitle = $pageContentNode.attr('class');
 				var isEnabledTemplate = false;
 				
 				for (var i in XenForo.bdTagMe_enabledTemplates) {
-					if (pageTemplateTitle == XenForo.bdTagMe_enabledTemplates[i]) {
+					// sondh@2013-02-23
+					// switched to use jQuery.fn.hasClass based on Arty suggestion
+					// http://xenforo.com/community/posts/477875
+					if ($pageContentNode.hasClass(XenForo.bdTagMe_enabledTemplates[i])) {
 						isEnabledTemplate = true;
 					}
 				}

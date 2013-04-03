@@ -9,7 +9,7 @@ class bdTagMe_FileSums
   'library/bdTagMe/Listener.php' => '8be8d3518c8e15a00f2e399ff16af98b',
   'library/bdTagMe/Option.php' => '345a57139d4c4f4553114471aa2478c2',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',
-  'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => '6e464def28274f7ff0ec81e699394af2',
+  'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => '9c2a653bb2b177153f6c83bd95ec07ce',
   'library/bdTagMe/XenForo/ControllerAdmin/UserGroup.php' => '3d27724080d9ee0aca1e2fc89b498f15',
   'library/bdTagMe/XenForo/ControllerPublic/Member.php' => '779bb81c39b89bd6d389dc637ff94fcd',
   'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => '586c6cd18b47862ac57fb02f0e2e3f83',
@@ -25,8 +25,8 @@ class bdTagMe_FileSums
   'library/bdTagMe/XenForo/ViewPublic/Member/Post.php' => '5f31a5c7e4fc8f91fcc582b66662b622',
   'js/bdTagMe/frontend.js' => '0d3e62f887bd3f44bddacd900311ad9c',
   'js/bdTagMe/full/frontend.js' => '251572736dfa6c0dd24611e50d41c87a',
-  'js/bdTagMe/full/tinymce_plugin.js' => 'a5267ef6a18a692de17ee0e3a4c0c9f2',
-  'js/bdTagMe/tinymce_plugin.js' => '4da13c7eaa35e13cd44e865369eb6de4',
+  'js/bdTagMe/full/tinymce_plugin.js' => '53efef7d966323038bb53114a704e3e6',
+  'js/bdTagMe/tinymce_plugin.js' => 'a56f44c7a5ef935958571538de0c5579',
 );
 	}
 }

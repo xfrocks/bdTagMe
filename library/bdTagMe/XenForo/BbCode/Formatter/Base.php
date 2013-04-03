@@ -44,6 +44,15 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 					'entity_type' => 'user',
 					'entity_id' => $entityId,
 					'entity_text' => $entityText,
+					'entity_link' => XenForo_Template_Helper_Core::callHelper(
+						'usernamehtml',
+						array(
+							array('user_id' => $entityId, 'username' => $entityText),
+							'',
+							false,
+							array('class' => 'bdTagMe_TaggedUser')
+						)
+					),
 				);
 			} else {
 				$parts = explode(',', $entityId);
