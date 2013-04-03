@@ -24,7 +24,7 @@ class bdTagMe_Engine {
 	public function notifyTaggedUsers2($uniqueId,
 		$contentType, $contentId, $contentUserId, $contentUserName,
 		$alertAction, array $ignoredUserIds = array(), XenForo_Model $someRandomModel = null) {
-		if (isset($this->_foundTagged[$uniqueId])) {
+		if (!empty($this->_foundTagged[$uniqueId])) {
 			if ($someRandomModel != null) {
 				/* @var $userModel XenForo_Model_User */
 				$userModel = $someRandomModel->getModelFromCache('XenForo_Model_User');
@@ -69,6 +69,18 @@ class bdTagMe_Engine {
 				);
 			}
 			
+			// sondh@2012-10-16
+			// support sending alerts in batches
+			$alertInBatch = bdTagMe_Option::get('alertInBatch');
+			if (count($taggedUsers) < 2) {
+				$alertInBatch = false;
+			}
+			
+			if ($alertInBatch) {
+				$alertModel =  $someRandomModel->getModelFromCache('XenForo_Model_Alert');
+				$alertModel->bdTagMe_beginBatch();
+			}
+			
 			foreach ($taggedUsers as &$taggedUser) {
 				if ($taggedUser['user_id'] == $contentUserId) continue; // it's stupid to notify one's self
 				
@@ -83,6 +95,10 @@ class bdTagMe_Engine {
 						$alertAction
 					);
 				}
+			}
+			
+			if ($alertInBatch) {
+				$alertModel->bdTagMe_commitBatch();
 			}
 			
 			return true;

@@ -16,6 +16,7 @@ class bdTagMe_Listener {
 			'XenForo_DataWriter_User',
 			'XenForo_DataWriter_UserGroup',
 		
+			'XenForo_Model_Alert',
 			'XenForo_Model_Post',
 			'XenForo_Model_ProfilePost',
 			'XenForo_Model_User',

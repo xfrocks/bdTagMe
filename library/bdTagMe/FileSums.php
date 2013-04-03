@@ -5,8 +5,8 @@ class bdTagMe_FileSums
 	public static function getHashes()
 	{
 		return array (
-  'library/bdTagMe/Engine.php' => 'bd7f649c25dec0ceb420b99d83065bb6',
-  'library/bdTagMe/Listener.php' => 'd7b80b4a20496508b1b8bad83a0a9184',
+  'library/bdTagMe/Engine.php' => 'b4a17674c1d9aa702b896821a114cb59',
+  'library/bdTagMe/Listener.php' => '8be8d3518c8e15a00f2e399ff16af98b',
   'library/bdTagMe/Option.php' => '345a57139d4c4f4553114471aa2478c2',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',
   'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => '6e464def28274f7ff0ec81e699394af2',
@@ -17,6 +17,7 @@ class bdTagMe_FileSums
   'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => '9ae752a56a991a3c10c3a678d1efbcb5',
   'library/bdTagMe/XenForo/DataWriter/User.php' => 'e84bd33415814c6e0eaa671c9e234ae9',
   'library/bdTagMe/XenForo/DataWriter/UserGroup.php' => '0d3e64c97ee6a172587853fc1be5d812',
+  'library/bdTagMe/XenForo/Model/Alert.php' => 'd9f93b08f983798f5b12f7d1f131b570',
   'library/bdTagMe/XenForo/Model/Post.php' => 'fdf58cdc19fbdbe593876e0908bf8253',
   'library/bdTagMe/XenForo/Model/ProfilePost.php' => '1dcb15c1b0c1f7841337427f563be7a1',
   'library/bdTagMe/XenForo/Model/User.php' => '9ee89f1094363c01dd31743eda968484',
