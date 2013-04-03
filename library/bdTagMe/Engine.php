@@ -247,7 +247,7 @@ class bdTagMe_Engine {
 		}
 	}
 	
-	public function renderFacebookAlike($message) {
+	public function renderFacebookAlike($message, array $options = array()) {
 		$rendered = $message;
 		$offset = 0;
 		$taggedUsers = array();
@@ -279,11 +279,15 @@ class bdTagMe_Engine {
 			$taggedUsers = array_reverse($taggedUsers, true);
 			
 			foreach ($taggedUsers as $offset => $taggedUser) {
-				$template = bdTagMe_Template_Helper::createTemplate('bdtagme_tag');
-				$template->setParam('userName', $taggedUser['username']);
-				$template->setParam('link', XenForo_Link::buildPublicLink('members', $taggedUser));
-				$template->setParam('removePrefix', bdTagMe_Option::get('removePrefix'));
-				$replacement = $template->render();
+				if (empty($options['plaintext'])) {
+					$template = bdTagMe_Template_Helper::createTemplate('bdtagme_tag');
+					$template->setParam('userName', $taggedUser['username']);
+					$template->setParam('link', XenForo_Link::buildPublicLink('members', $taggedUser));
+					$template->setParam('removePrefix', bdTagMe_Option::get('removePrefix'));
+					$replacement = $template->render();
+				} else {
+					$replacement = (bdTagMe_Option::get('removePrefix') ? '' : '@') . $taggedUser['username'];
+				}
 				
 				$rendered = substr($rendered, 0, $offset)
 							. $replacement

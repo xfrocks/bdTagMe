@@ -143,7 +143,7 @@
 
 		ed.onKeyDown.add($.context(this, 'edKeyDown'));
 	};
-	XenForo.bdTagMe_TinymceAutoComplete.prototype = XenForo.AutoComplete.prototype;
+	XenForo.bdTagMe_TinymceAutoComplete.prototype = $.extend(true, {}, XenForo.AutoComplete.prototype);
 	XenForo.bdTagMe_TinymceAutoComplete.prototype.edKeyDown = function(ed, e) {
 		var code = e.keyCode || e.charCode, prevent = true;
 

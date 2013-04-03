@@ -46,7 +46,7 @@
 		$textarea.keydown($.context(this, 'keystroke2'));
 		$textarea.blur($.context(this, 'blur'));
 	};
-	XenForo.bdTagMe_ProfilePostAutoComplete.prototype = XenForo.AutoComplete.prototype;
+	XenForo.bdTagMe_ProfilePostAutoComplete.prototype = $.extend(true, {}, XenForo.AutoComplete.prototype);
 	XenForo.bdTagMe_ProfilePostAutoComplete.prototype.keystroke2 = function(e) {
 		var code = e.keyCode || e.charCode;
 		var resultsVisible = this.resultsVisible;
