@@ -6,29 +6,46 @@ class bdTagMe_Engine {
 	
 	protected $_foundTagged = array();
 	
-	public function notifyTaggedUsers($uniqueId, $contentType, $contentId, $alertAction, array $ignoredUserIds = array(), XenForo_Model $someRandomModel = null, array $viewingUser = null) {
+	public function notifyTaggedUsers($uniqueId,
+		$contentType, $contentId,
+		$alertAction, array $ignoredUserIds = array(), XenForo_Model $someRandomModel = null,
+		array $viewingUser = null) {
+		// this method is kept for legacy support reason...
+		$someRandomModel->standardizeViewingUserReference($viewingUser);
+		
+		return $this->notifyTaggedUsers2($uniqueId,
+			$contentType, $contentId, $viewingUser['user_id'], $viewingUser['username'],
+			$alertAction, $ignoredUserIds, $someRandomModel,
+			$viewingUser);
+	}
+	
+	public function notifyTaggedUsers2($uniqueId,
+		$contentType, $contentId, $contentUserId, $contentUserName,
+		$alertAction, array $ignoredUserIds = array(), XenForo_Model $someRandomModel = null) {
 		if (isset($this->_foundTagged[$uniqueId])) {
-			$someRandomModel->standardizeViewingUserReference($viewingUser);
-			
 			/* @var $userModel XenForo_Model_User */
 			$userModel = $someRandomModel->getModelFromCache('XenForo_Model_User');
 			
 			foreach ($this->_foundTagged[$uniqueId] as &$taggedUser) {
-				if ($taggedUser['user_id'] == $viewingUser['user_id']) continue; // it's stupid to notify one's self
+				if ($taggedUser['user_id'] == $contentUserId) continue; // it's stupid to notify one's self
 				
-				if (!$userModel->isUserIgnored($taggedUser, $viewingUser['user_id'])
+				if (!$userModel->isUserIgnored($taggedUser, $contentUserId)
 					AND !in_array($taggedUser['user_id'], $ignoredUserIds)
 					AND XenForo_Model_Alert::userReceivesAlert($taggedUser, $contentType, $alertAction)
 				) {
 					XenForo_Model_Alert::alert(
 						$taggedUser['user_id'],
-						$viewingUser['user_id'], $viewingUser['username'],
+						$contentUserId, $contentUserName,
 						$contentType, $contentId,
 						$alertAction
 					);
 				}
 			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 	public function searchTextForTagged($uniqueId, &$message, array $options = array(), &$errorInfo = null) {
@@ -85,8 +102,12 @@ class bdTagMe_Engine {
 		
 		do {
 			// PLEASE UPDATE THE REGULAR EXPRESSION IN JAVASCRIPT IF YOU CHANGE IT HERE (3 PLACES)
+			// normally, there is [ and ] in the regular expression
+			// but they have been removed to specifically support [ and ] in username
+			// if this regular expression is being reused to detect non-word characters
+			// you should consider to add [ and ] into the mix!
 			if ($matched = preg_match(
-				'/(\s|^|\])@([^\s\(\)\.,!\?:;@\\\\]+)/',
+				'/(\s|^|\])@([^\s\(\)\.,!\?:;@\\\\{}]+)/',
 				$message,
 				$matches,
 				PREG_OFFSET_CAPTURE,
@@ -94,7 +115,9 @@ class bdTagMe_Engine {
 			)) {
 				$offset = $matches[2][1];
 				
-				if ($this->_isBetweenUrlTags($message, $offset) == false) {
+				if (!$this->_isBetweenUrlTags($message, $offset)
+					AND !$this->_isBetweenPlainTags($message, $offset) // since 1.5.2
+				) {
 					// only saves the portion if it is valid
 					// 1. not in between URL tags
 					// 2. (to be added)
@@ -178,6 +201,32 @@ class bdTagMe_Engine {
 			}
 		} else {
 			// no URL tag so far
+		}
+		
+		return false;
+	}
+	
+	protected function _isBetweenPlainTags(&$message, $position) {
+		// this method is just a simple copy pasta of _isBetweenUrlTags. LOL
+		// since 1.5.2
+		// found the nearest [PLAIN before the position
+		$posOpen = strripos($message, '[PLAIN', $position - strlen($message));
+		
+		if ($posOpen !== false) {
+			// there is an open tag before us, checks for close tag
+			$posClose = stripos($message, '[/PLAIN]', $posOpen);
+			
+			if ($posClose === false) {
+				// no close tag (?!)
+			} else if ($posClose < $position) {
+				// there is one but it's also before us
+				// that means we are not in between them
+			} else {
+				// this position is in between 2 PLAIN tags!!!
+				return true;
+			}
+		} else {
+			// no PLAIN tag so far
 		}
 		
 		return false;

@@ -45,9 +45,10 @@ class bdTagMe_XenForo_DataWriter_ProfilePostComment extends XFCP_bdTagMe_XenForo
 		$ignoredUserIds[] = $profileUser['user_id']; // ignore the profile owner
 		$ignoredUserIds[] = $profilePost['user_id']; // ignore the profile post's poster
 		
-		$engine->notifyTaggedUsers(
+		$engine->notifyTaggedUsers2(
 			self::BDTAGME_UNIQUE_ID,
-			'profile_post', $comment['profile_post_id'], 'comment_tagged',
+			'profile_post', $comment['profile_post_id'], $comment['user_id'], $comment['username'],
+			'comment_tagged',
 			$ignoredUserIds,
 			$profilePostModel
 		);

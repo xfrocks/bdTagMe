@@ -42,9 +42,10 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 		/* @var $profilePostModel XenForo_Model_ProfilePost */
 		$profilePostModel = $this->_getProfilePostModel();
 		
-		$engine->notifyTaggedUsers(
+		$engine->notifyTaggedUsers2(
 			self::BDTAGME_UNIQUE_ID,
-			'profile_post', $data['profile_post_id'], 'tagged',
+			'profile_post', $data['profile_post_id'], $data['user_id'], $data['username'],
+			'tagged',
 			array(
 				$this->get('profile_user_id'), // obviously the target profile shouldn't be notified again
 			),

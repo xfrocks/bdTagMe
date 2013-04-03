@@ -30,7 +30,7 @@
 		
 		this.symbol = '@';
 		// PLEASE UPDATE THE REGULAR EXPRESSION IN PHP IF YOU CHANGE IT HERE (3 PLACES)
-		this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\]/);
+		this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\{}]/);
 		
 		this.suggestionMaxLength = 0;
 		if (XenForo.bdTagMe_suggestionMaxLength) {
