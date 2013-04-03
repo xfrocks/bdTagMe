@@ -137,17 +137,17 @@ class bdTagMe_Engine {
 					// 1. not in between URL tags
 					// 2. (to be added)
 					
-					$text = strtolower(trim($matches[2][0])); // normalize it a little bit
+					$text = utf8_strtolower(utf8_trim($matches[2][0])); // normalize it a little bit
 					
 					// we removed [ and ] from the 2nd group in the regular expression
 					// that will cause problem if somebody use [b]@username[/b]
 					// we will now once again look for the '[' character and try to remove it
-					$stupidCharacterPos = strpos($text, '[');
+					$stupidCharacterPos = utf8_strpos($text, '[');
 					if ($stupidCharacterPos !== false AND $stupidCharacterPos > 0) {
 						// important: only remove it if it's not the first character!
 						// this is very important because if we remove it when it's the first character
 						// all those "[GANGSER] username" will become un-tag-able
-						$text = substr($text, 0, $stupidCharacterPos);
+						$text = utf8_substr($text, 0, $stupidCharacterPos);
 					}
 					
 					$found[$offset] = $text; // please note: this offset doesn't include the prefix '@'
@@ -169,26 +169,26 @@ class bdTagMe_Engine {
 				
 				if ($options['removePrefix']) {
 					// removes prefix (subtract 1 from the offset)
-					$message = substr($message, 0, $offset - 1)
+					$message = utf8_substr($message, 0, $offset - 1)
 								. $replacement
-								. substr($message, $offset + strlen($portion));
+								. utf8_substr($message, $offset + utf8_strlen($portion));
 				} else {
 					// keeps the prefix
-					$message = substr($message, 0, $offset)
+					$message = utf8_substr($message, 0, $offset)
 								. $replacement
-								. substr($message, $offset + strlen($portion));
+								. utf8_substr($message, $offset + utf8_strlen($portion));
 				}
 				break;
 				
 			case 'custom':
 				$replacement = "[{$options['modeCustomTag']}={$user['user_id']}]{$user['username']}[/{$options['modeCustomTag']}]";
-				$message = substr($message, 0, $offset - 1) . $replacement . substr($message, $offset + strlen($portion));
+				$message = utf8_substr($message, 0, $offset - 1) . $replacement . utf8_substr($message, $offset + utf8_strlen($portion));
 				break;
 				
 			case 'facebookAlike':
 				$escaped = $this->_escapeFacebookAlike($user['username']);
 				$replacement = "@[{$user['user_id']}:{$escaped}]";
-				$message = substr($message, 0, $offset - 1) . $replacement . substr($message, $offset + strlen($portion));
+				$message = utf8_substr($message, 0, $offset - 1) . $replacement . utf8_substr($message, $offset + utf8_strlen($portion));
 				break;
 				
 			// case 'dontChange':
@@ -199,11 +199,11 @@ class bdTagMe_Engine {
 	
 	protected function _isBetweenUrlTags(&$message, $position) {
 		// found the nearest [URL before the position
-		$posOpen = strripos($message, '[URL', $position - strlen($message));
+		$posOpen = self::utf8_strripos($message, '[URL', $position - utf8_strlen($message));
 		
 		if ($posOpen !== false) {
 			// there is an open tag before us, checks for close tag
-			$posClose = stripos($message, '[/URL]', $posOpen);
+			$posClose = self::utf8_stripos($message, '[/URL]', $posOpen);
 			
 			if ($posClose === false) {
 				// no close tag (?!)
@@ -225,11 +225,11 @@ class bdTagMe_Engine {
 		// this method is just a simple copy pasta of _isBetweenUrlTags. LOL
 		// since 1.5.2
 		// found the nearest [PLAIN before the position
-		$posOpen = strripos($message, '[PLAIN', $position - strlen($message));
+		$posOpen = self::utf8_strripos($message, '[PLAIN', $position - utf8_strlen($message));
 		
 		if ($posOpen !== false) {
 			// there is an open tag before us, checks for close tag
-			$posClose = stripos($message, '[/PLAIN]', $posOpen);
+			$posClose = self::utf8_stripos($message, '[/PLAIN]', $posOpen);
 			
 			if ($posClose === false) {
 				// no close tag (?!)
@@ -267,7 +267,7 @@ class bdTagMe_Engine {
 			
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$users[strtolower($record['username'])] = $record;
+					$users[utf8_strtolower($record['username'])] = $record;
 				}
 			}
 		}
@@ -283,16 +283,16 @@ class bdTagMe_Engine {
 		// one-word username
 		if (isset($users[$portion])) {
 			$userName = $portion;
-			$userNameLength = strlen($userName);
+			$userNameLength = utf8_strlen($userName);
 		}
 		
 		// multi-word username
 		foreach ($users as $tmpUserName => &$user) {
-			if (strpos($tmpUserName, $portion) === 0) {
+			if (utf8_strpos($tmpUserName, $portion) === 0) {
 				// we found a match, check if the length is better
-				$tmpLength = strlen($tmpUserName);
+				$tmpLength = utf8_strlen($tmpUserName);
 				
-				$portionInMessage = strtolower(substr($message, $offset, $tmpLength));
+				$portionInMessage = utf8_strtolower(utf8_substr($message, $offset, $tmpLength));
 				if ($portionInMessage !== $tmpUserName) {
 					// the username doesn't match the message
 					// of course we can't accept it
@@ -344,7 +344,7 @@ class bdTagMe_Engine {
 					$taggedUsers[$offset] = array('user_id' => $userId, 'username' => $userName, 'fullMatched' => $fullMatched);
 				}
 				
-				$offset++; // keep us from matching the same thing all over again
+				$offset++; // prevent us from matching the same thing all over again
 			}
 		} while ($matched);
 		
@@ -386,6 +386,30 @@ class bdTagMe_Engine {
 		), array(
 			']', '\\'
 		), $string);
+	}
+	
+	public static function utf8_strrpos($haystack, $needle, $offset) {
+		if (UTF8_MBSTRING) {
+			return mb_strrpos($haystack, $needle, $offset);
+		} else {
+			return strrpos($haystack, $needle, $offset);
+		}
+	}
+	
+	public static function utf8_stripos($haystack, $needle, $offset) {
+		if (UTF8_MBSTRING) {
+			return mb_stripos($haystack, $needle, $offset);
+		} else {
+			return stripos($haystack, $needle, $offset);
+		}
+	}
+	
+	public static function utf8_strripos($haystack, $needle, $offset) {
+		if (UTF8_MBSTRING) {
+			return mb_strripos($haystack, $needle, $offset);
+		} else {
+			return strripos($haystack, $needle, $offset);
+		}
 	}
 	
 	protected static $_instance = false;
