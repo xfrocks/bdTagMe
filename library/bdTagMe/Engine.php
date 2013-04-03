@@ -6,6 +6,17 @@ class bdTagMe_Engine {
 	const ERROR_TOO_MANY_TAGGED = 'too_many_tagged';
 	const SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS = 'bdTagMe_taggableUserGroups';
 	
+	// PLEASE UPDATE THE SYMBOL AND REGEX IF YOU CHANGE IT HERE. THE 3 PLACES ARE:
+	// xenforo/js/bdTagMe/full/frontend.js
+	// xenforo/js/bdTagMe/full/tinymce_plugin.js
+	// xenforo/library/bdTagMe/Engine.php
+	// normally, there is [ and ] in the regular expression
+	// but they have been removed to specifically support [ and ] in username
+	// if this regular expression is being reused to detect non-word characters
+	// you should consider to add [ and ] into the mix!
+	const SYMBOL = '@';
+	const REGEX = '/[\s\(\)\.,!\?:;@\\\\{}]/';
+	
 	protected $_foundTagged = array();
 	
 	public function notifyTaggedUsers($uniqueId,
@@ -204,21 +215,48 @@ class bdTagMe_Engine {
 		$offset = 0;
 		$found = array();
 		
-		do {
-			// PLEASE UPDATE THE REGULAR EXPRESSION IN JAVASCRIPT IF YOU CHANGE IT HERE (3 PLACES)
-			// normally, there is [ and ] in the regular expression
-			// but they have been removed to specifically support [ and ] in username
-			// if this regular expression is being reused to detect non-word characters
-			// you should consider to add [ and ] into the mix!
-			if ($matched = preg_match(
-				'/(\s|^|\])@([^\s\(\)\.,!\?:;@\\\\{}]+)/',
-				$message,
-				$matches,
-				PREG_OFFSET_CAPTURE,
-				$offset
-			)) {
-				$offset = $matches[2][1];
-				
+		while(1) {
+			// sondh@2012-10-17
+			// switched from using preg_match to utf8_strpos
+			// because preg_match doesn't report unicode offset properly
+			$foundLength = 0; // reset
+			$symbolOffset = utf8_strpos($message, self::SYMBOL, $offset);
+			
+			if ($symbolOffset === false) {
+				// could not find any symbol
+				break; // this will end the while(1) loop
+			}
+			
+			// check the previous character
+			$prevCharIsGood = true;
+			if ($symbolOffset > 0) {
+				$prevChar = utf8_substr($message, $symbolOffset - 1, 1);
+				if (!preg_match(self::REGEX, $prevChar)) {
+					// the previous character is a text-character
+					// this portion may be part of an email address or something
+					$prevCharIsGood = false;
+				}
+			}
+			
+			if ($prevCharIsGood) {
+				// okie, look for the portion (after the symbol) now...
+				$messageLengthMinus1 = utf8_strlen($message) - 1;
+				while ($symbolOffset + $foundLength < $messageLengthMinus1) {
+					// look for as many text-character as possible
+					$tmpChar = utf8_substr($message, $symbolOffset + $foundLength + 1, 1);
+					if (!preg_match(self::REGEX, $tmpChar)) {
+						// this is a text-character, accept it and continue looking
+						$foundLength++;
+					} else {
+						// non text character, stop looking
+						break;
+					}
+				}
+			}
+			
+			$offset = $symbolOffset + 1; // this is the offset of the first character of the portion
+			
+			if ($foundLength > 0) {
 				if (!$this->_isBetweenUrlTags($message, $offset)
 					AND !$this->_isBetweenPlainTags($message, $offset) // since 1.5.2
 				) {
@@ -226,23 +264,26 @@ class bdTagMe_Engine {
 					// 1. not in between URL tags
 					// 2. (to be added)
 					
-					$text = utf8_strtolower(utf8_trim($matches[2][0])); // normalize it a little bit
+					$portion = utf8_strtolower(utf8_trim(utf8_substr($message, $offset, $foundLength)));
 					
 					// we removed [ and ] from the 2nd group in the regular expression
 					// that will cause problem if somebody use [b]@username[/b]
 					// we will now once again look for the '[' character and try to remove it
-					$stupidCharacterPos = utf8_strpos($text, '[');
+					$stupidCharacterPos = utf8_strpos($portion, '[');
 					if ($stupidCharacterPos !== false AND $stupidCharacterPos > 0) {
 						// important: only remove it if it's not the first character!
 						// this is very important because if we remove it when it's the first character
 						// all those "[GANGSER] username" will become un-tag-able
-						$text = utf8_substr($text, 0, $stupidCharacterPos);
+						// sondh@2012-10-17: this is soooo complicated, took me a while to read
+						// the comment and understood what I meant to say!
+						$portion = utf8_substr($portion, 0, $stupidCharacterPos);
 					}
 					
-					$found[$offset] = $text; // please note: this offset doesn't include the prefix '@'
+					$found[$offset] = $portion;
 				}
 			}
-		} while ($matched);
+		}
+		
 		// it's easier to process found portions backward
 		// (the offset of them won't be changed after search and replace for example)
 		// so we are doing it here
