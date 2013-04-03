@@ -9,7 +9,7 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 			$found = array();
 			
 			do {
-				if ($matched = preg_match('/(\s|^)@([^\s\(\)\[\]\.,!\?:;]+)/', $value, $matches, PREG_OFFSET_CAPTURE,$offset)) {
+				if ($matched = preg_match('/(\s|^)@([^\s\(\)\[\]\.,!\?:;@]+)/', $value, $matches, PREG_OFFSET_CAPTURE,$offset)) {
 					$offset = $matches[2][1];
 					$text = strtolower($matches[2][0]);
 					$found["$offset"] = $text;
@@ -19,10 +19,11 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 			if (!empty($found)) {
 				$db = XenForo_Application::get('db');
 				$sql = "
-					SELECT user_id, username
-					FROM xf_user
+					SELECT user.user_id, user.username, user_profile.ignored
+					FROM `xf_user` AS user
+					INNER JOIN `xf_user_profile` AS user_profile ON (user_profile.user_id = user.user_id)
 					WHERE
-					" . implode(' OR ',array_map(create_function('$a','$a = mysql_escape_string($a); return "username LIKE \'$a%\'";'),$found)) . " 
+					" . implode(' OR ',array_map(create_function('$a','return "username LIKE " . XenForo_Db::quoteLike($a, "r");'), $found)) . " 
 				";
 				$records = $db->fetchAll($sql);
 				
@@ -37,6 +38,7 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 					foreach (array_reverse($found, true) as $offset => $text) {
 						$offset = intval($offset);
 						// first we have to look for URL tags
+						// we don't want to replace the stuff inside an URL
 						$open = strripos($value,'[URL',$offset - strlen($value));
 						if ($open !== false) {
 							// there is an open tag before us
@@ -70,20 +72,25 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 						}
 						
 						// start replacing
-						if (!empty($target)) {
+						if (!empty($target) AND !empty($mapped[$target])) {
 							$tagged =& $mapped[$target];
-							$link = $tagged['link'];
-							$username = $tagged['username'];
-							$replacement = "[URL='{$link}']{$username}[/URL]";
-							
-							// since 1.0: remove "@" or not
-							if (XenForo_Application::get('options')->bdtagme_remove_prefix) {
-								// remove prefix
-								$value = substr($value, 0, $offset - 1) . $replacement . substr($value, $offset + strlen($target));
+							$bbCodeTag = XenForo_Application::get('options')->bdtagme_mode_custom_tag;
+							if (XenForo_Application::get('options')->bdtagme_mode == 'url' AND !empty($bbCodeTag)) { // since 1.1: supports 2 modes
+								$replacement = "[URL='{$tagged['link']}']{$tagged['username']}[/URL]";
+								
+								// since 1.0: remove "@" or not
+								if (XenForo_Application::get('options')->bdtagme_remove_prefix) {
+									// remove prefix
+									$value = substr($value, 0, $offset - 1) . $replacement . substr($value, $offset + strlen($target));
+								} else {
+									// keep the prefix
+									$value = substr($value, 0, $offset) . $replacement . substr($value, $offset + strlen($target));
+								}
 							} else {
-								// keep the prefix
-								$value = substr($value, 0, $offset) . $replacement . substr($value, $offset + strlen($target));
+								$replacement = "[{$bbCodeTag}={$tagged['user_id']}]{$tagged['username']}[/$bbCodeTag]";
+								$value = substr($value, 0, $offset - 1) . $replacement . substr($value, $offset + strlen($target));
 							}
+							
 							
 							$this->taggeds[] = $tagged;
 						}
@@ -103,6 +110,7 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 				}
 			}
 		}
+		
 		parent::set($field,$value,$tableName,$options);
 	}
 	
@@ -114,7 +122,10 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 			$post = $this->getMergedData();
 			foreach ($this->taggeds as $tagged) {
 				if ($tagged['user_id'] == $post['post_id']) continue; // it's stupid to send alert to myself
-				if (XenForo_Model_Alert::userReceivesAlert($tagged, 'post', 'quote')) {
+				
+				if (!$this->getModelFromCache('XenForo_Model_User')->isUserIgnored($tagged, $post['user_id'])
+					&& XenForo_Model_Alert::userReceivesAlert($tagged, 'post', 'tagged')
+				) {
 					XenForo_Model_Alert::alert($tagged['user_id'],
 						$post['user_id'], $post['username'],
 						'post', $post['post_id'],
