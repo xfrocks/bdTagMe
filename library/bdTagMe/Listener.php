@@ -56,6 +56,7 @@ class bdTagMe_Listener {
 				break;
 				
 			case 'user_group_edit': // admincp
+			case 'option_template_registrationDefaults': // admincp
 			case 'editor':
 			case 'PAGE_CONTAINER':
 				$template->preloadTemplate('bdtagme_' . $templateName);
@@ -91,6 +92,14 @@ class bdTagMe_Listener {
 				$ourTemplate = $template->create('bdtagme_user_group_edit', $template->getParams());
 				$search = '<fieldset id="piGroups">'; // TODO: find better way to do this
 				$content = str_replace($search, $ourTemplate->render() . $search, $content);
+				break;
+			case 'option_template_registrationDefaults': // admincp
+				$ourTemplate = $template->create('bdtagme_option_template_registrationDefaults', $template->getParams());
+				$search = '</ul>'; // TODO: find better way to do this
+				$pos = strpos($content, $search);
+				if ($pos !== false) {
+					$content = substr($content, 0, $pos) . $ourTemplate->render() . substr($content, $pos);
+				}
 				break;
 			case 'editor':
 				$ourTemplate = $template->create('bdtagme_' . $templateName, $template->getParams());

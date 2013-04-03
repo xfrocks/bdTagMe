@@ -4,6 +4,9 @@
   <admin_permissions/>
   <admin_style_properties/>
   <admin_templates>
+    <template title="bdtagme_option_template_registrationDefaults"><![CDATA[<xen:checkbox>
+	<xen:option name="{$fieldPrefix}[{$preparedOption.option_id}][bdtagme_email]" selected="{$value.bdtagme_email}">{xen:phrase bdtagme_receive_email_when_tagged}</xen:option>
+</xen:checkbox>]]></template>
     <template title="bdtagme_user_group_edit"><![CDATA[<xen:checkboxunit label="" explain="{xen:phrase bdtagme_user_group_is_taggable_explain}">
 	<xen:option name="bdTagMe_isTaggable" selected="{$bdTagMe_isTaggable}">
 		{xen:phrase bdtagme_user_group_is_taggable}
@@ -141,7 +144,7 @@ To stop receiving email, please edit your account preferences:
     <phrase title="bdtagme_members_count" version_id="27" version_string="1.6-dev"><![CDATA[Members Count]]></phrase>
     <phrase title="bdtagme_mode_custom" version_id="3" version_string="1.0"><![CDATA[Custom]]></phrase>
     <phrase title="bdtagme_mode_url" version_id="3" version_string="1.0"><![CDATA[URL]]></phrase>
-    <phrase title="bdtagme_receive_email_when_tagged" version_id="40" version_string="1.6.6"><![CDATA[Receive email when someone tagged you]]></phrase>
+    <phrase title="bdtagme_receive_email_when_tagged" version_id="41" version_string="1.7"><![CDATA[Receive email when name is mentioned]]></phrase>
     <phrase title="bdtagme_receive_email_when_tagged_explain" version_id="40" version_string="1.6.6"><![CDATA[Email notifications for mentions from threads, replies, profile posts, etc.]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_comment_on_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone comments on a profile post with you tagged]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a profile post]]></phrase>
