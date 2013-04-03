@@ -255,7 +255,7 @@ class bdTagMe_Engine {
 		switch ($options['mode']) {
 			case 'url':
 				if ($entity['entity_type'] == 'user') {
-					$link = XenForo_Link::buildPublicLink('canoncial:members', $entity['user']);
+					$link = XenForo_Link::buildPublicLink('canonical:members', $entity['user']);
 					
 					$replacement = "[URL='{$link}']{$entity['entity_text']}[/URL]";
 				} else {
