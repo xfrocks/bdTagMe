@@ -7,7 +7,9 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 	protected $_messagePreSaveCalled = false;
 	
 	public function set($field, $value, $tableName = '', array $options = null) {
-		if ($field == 'message' AND $this->_messagePreSaveCalled === false) {
+		if ($field == 'message'
+			AND $this->_messagePreSaveCalled !== false
+		) {
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
 				'max'          => bdTagMe_Option::get('max'),

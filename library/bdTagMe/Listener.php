@@ -13,6 +13,8 @@ class bdTagMe_Listener {
 		
 			'XenForo_Model_Post',
 			'XenForo_Model_ProfilePost',
+		
+			'XenForo_ViewPublic_Member_Post',
 		);
 		
 		if (in_array($class, $classes)) {

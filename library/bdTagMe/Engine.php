@@ -52,7 +52,7 @@ class bdTagMe_Engine {
 			
 			if (!empty($users)) {
 				foreach ($foundPortions as $offset => $portion) {
-					$userName = $this->_getBestMatchedUserNameForPortion($portion, $users);
+					$userName = $this->_getBestMatchedUserNameForPortion($message, $portion, $offset, $users);
 					
 					if (!empty($userName)) {
 						$this->_replacePortionInText($message, $userName, $offset, $users[$userName], $options);
@@ -201,7 +201,7 @@ class bdTagMe_Engine {
 		return $users;
 	}
 	
-	protected function _getBestMatchedUserNameForPortion($portion, array &$users) {
+	protected function _getBestMatchedUserNameForPortion(&$message, $portion, $offset, array &$users) {
 		$userName = '';
 		$userNameLength = 0;
 		$tmpLength = 0;
@@ -217,6 +217,15 @@ class bdTagMe_Engine {
 			if (strpos($tmpUserName, $portion) === 0) {
 				// we found a match, check if the length is better
 				$tmpLength = strlen($tmpUserName);
+				
+				$portionInMessage = strtolower(substr($message, $offset, $tmpLength));
+				if ($portionInMessage !== $tmpUserName) {
+					// the username doesn't match the message
+					// of course we can't accept it
+					// since 1.4.1
+					continue;
+				}
+				
 				if ($tmpLength > $userNameLength) {
 					// the length is good, change it now
 					$userName = $tmpUserName;
@@ -273,9 +282,12 @@ class bdTagMe_Engine {
 				$template = bdTagMe_Template_Helper::createTemplate('bdtagme_tag');
 				$template->setParam('userName', $taggedUser['username']);
 				$template->setParam('link', XenForo_Link::buildPublicLink('members', $taggedUser));
+				$template->setParam('removePrefix', bdTagMe_Option::get('removePrefix'));
 				$replacement = $template->render();
 				
-				$rendered = substr($rendered, 0, $offset) . $replacement . substr($rendered, $offset + strlen($taggedUser['fullMatched']));
+				$rendered = substr($rendered, 0, $offset)
+							. $replacement
+							. substr($rendered, $offset + strlen($taggedUser['fullMatched']));
 			}
 		}
 		
