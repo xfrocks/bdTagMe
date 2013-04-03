@@ -202,7 +202,7 @@ if (typeof tinymce != 'undefined') {
 			
 			this.$input = new XenForo.bdTagMe_EditorWrapper(ed);
 			this.ed = ed;
-			this.url = 'index.php?members/find&_xfResponseType=json';
+			this.url = 'index.php?members/tag-suggestions&_xfResponseType=json';
 	
 			var options = {
 				multiple: false,

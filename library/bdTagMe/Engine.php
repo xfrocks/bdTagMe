@@ -23,10 +23,51 @@ class bdTagMe_Engine {
 		$contentType, $contentId, $contentUserId, $contentUserName,
 		$alertAction, array $ignoredUserIds = array(), XenForo_Model $someRandomModel = null) {
 		if (isset($this->_foundTagged[$uniqueId])) {
-			/* @var $userModel XenForo_Model_User */
-			$userModel = $someRandomModel->getModelFromCache('XenForo_Model_User');
+			if ($someRandomModel != null) {
+				/* @var $userModel XenForo_Model_User */
+				$userModel = $someRandomModel->getModelFromCache('XenForo_Model_User');
+			} else {
+				/* @var $userModel XenForo_Model_User */
+				$userModel = XenForo_Model::create('XenForo_Model_User');
+			}
+			$taggedUsers = array();
+			$neededUserIds = array();
 			
-			foreach ($this->_foundTagged[$uniqueId] as &$taggedUser) {
+			foreach ($this->_foundTagged[$uniqueId] as &$entity) {
+				switch ($entity['entity_type']) {
+					case 'user':
+						$taggedUsers[$entity['user']['user_id']] = &$entity['user'];
+						break;
+					case 'user_group':
+						if (isset($entity['user_group']['userIds'])) {
+							$neededUserIds = array_merge($neededUserIds, $entity['user_group']['userIds']);
+						}
+						break;
+				}
+			}
+			
+			// filter $neededUserIds a bit, try to identify user in $taggedUsers if possible
+			$neededUserIds = array_unique($neededUserIds);
+			foreach (array_keys($neededUserIds) as $i) {
+				$neededUserId = $neededUserIds[$i];
+				if (isset($taggedUsers[$neededUserId])) {
+					unset($neededUserIds[$i]);
+				}
+			}
+			if (!empty($neededUserIds)) {
+				// okie, we still need some users now
+				// use the user model to get them
+				$taggedUsers = array_merge(
+					$taggedUsers,
+					$userModel->getUsersByIds($neededUserIds, array(
+						// as noted in _getEntitiesByPortions, we need to request
+						// option and profile for these users too
+						'join' => XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PROFILE
+					))
+				);
+			}
+			
+			foreach ($taggedUsers as &$taggedUser) {
 				if ($taggedUser['user_id'] == $contentUserId) continue; // it's stupid to notify one's self
 				
 				if (!$userModel->isUserIgnored($taggedUser, $contentUserId)
@@ -61,31 +102,40 @@ class bdTagMe_Engine {
 
 		// array to store all tagged users
 		$tagged = array();
+		$taggedUserIds = array();
 		
 		$foundPortions = $this->_searchTextForPortions($message, $options);
 		
 		if (!empty($foundPortions)) {
-			$users = $this->_getUsersByPortions($foundPortions);
+			$entities = $this->_getEntitiesByPortions($foundPortions);
 			
-			if (!empty($users)) {
+			if (!empty($entities)) {
 				foreach ($foundPortions as $offset => $portion) {
-					$userName = $this->_getBestMatchedUserNameForPortion($message, $portion, $offset, $users);
+					$entitySafeText = $this->_getBestMatchedEntitySafeTextForPortion($message, $portion, $offset, $entities);
 					
-					if (!empty($userName)) {
-						$this->_replacePortionInText($message, $userName, $offset, $users[$userName], $options);
-						$tagged[$userName] = $users[$userName];
-						
-						// sondh@2012-09-06
-						// moved link building from _getBestMatchedUserNameForPortion() to here
-						// to reduce resource consumption
-						// as suggested by Adonis Figueroa
-						$tagged[$userName]['link'] = XenForo_Link::buildPublicLink('canoncial:members', $tagged[$userName]);
+					if (!empty($entitySafeText)) {
+						$this->_replacePortionInText($message, $entitySafeText, $offset, $entities[$entitySafeText], $options);
+						$tagged[$entitySafeText] = $entities[$entitySafeText];
+					}
+					
+					switch ($tagged[$entitySafeText]['entity_type']) {
+						case 'user':
+							$taggedUserIds[] = $tagged[$entitySafeText]['user']['user_id'];
+							break;
+						case 'user_group':
+							if (isset($tagged[$entitySafeText]['user_group']['userIds'])) {
+								$taggedUserIds = array_merge($taggedUserIds, $tagged[$entitySafeText]['user_group']['userIds']);
+							}
+							break;
 					}
 				}
 			}
 		}
 		
-		if (!empty($options['max']) AND count($tagged) > $options['max']) {
+		$taggedUserIds = array_unique($taggedUserIds);
+		$taggedUsersCount = count($taggedUserIds);
+		
+		if (!empty($options['max']) AND $taggedUsersCount > $options['max']) {
 			// a limit is set and this message has exceeded that limit
 			$errorInfo = array(
 				self::ERROR_TOO_MANY_TAGGED,
@@ -162,10 +212,16 @@ class bdTagMe_Engine {
 		return $found;
 	}
 	
-	protected function _replacePortionInText(&$message, $portion, $offset, &$user, array &$options) {
+	protected function _replacePortionInText(&$message, $portion, $offset, &$entity, array &$options) {
 		switch ($options['mode']) {
 			case 'url':
-				$replacement = "[URL='{$user['link']}']{$user['username']}[/URL]";
+				if ($entity['entity_type'] == 'user') {
+					$link = XenForo_Link::buildPublicLink('canoncial:members', $entity['user']);
+					
+					$replacement = "[URL='{$link}']{$entity['entity_text']}[/URL]";
+				} else {
+					$replacement = $entity['entity_text'];
+				}
 				
 				if ($options['removePrefix']) {
 					// removes prefix (subtract 1 from the offset)
@@ -181,13 +237,13 @@ class bdTagMe_Engine {
 				break;
 				
 			case 'custom':
-				$replacement = "[{$options['modeCustomTag']}={$user['user_id']}]{$user['username']}[/{$options['modeCustomTag']}]";
+				$replacement = "[{$options['modeCustomTag']}={$entity['entity_id']}]{$entity['entity_text']}[/{$options['modeCustomTag']}]";
 				$message = utf8_substr($message, 0, $offset - 1) . $replacement . utf8_substr($message, $offset + utf8_strlen($portion));
 				break;
 				
 			case 'facebookAlike':
-				$escaped = $this->_escapeFacebookAlike($user['username']);
-				$replacement = "@[{$user['user_id']}:{$escaped}]";
+				$escaped = $this->_escapeFacebookAlike($entity['entity_text']);
+				$replacement = "@[{$entity['entity_id']}:{$escaped}]";
 				$message = utf8_substr($message, 0, $offset - 1) . $replacement . utf8_substr($message, $offset + utf8_strlen($portion));
 				break;
 				
@@ -247,16 +303,32 @@ class bdTagMe_Engine {
 		return false;
 	}
 	
-	protected function _getUsersByPortions(array $portions) {
+	protected function _getEntitiesByPortions(array $portions) {
 		$db = XenForo_Application::get('db');
-		$users = array();
+		$entities = array();
 		
 		if (!empty($portions)) {
+			$userGroups = $this->getTaggableUserGroups();
+			foreach ($userGroups as $userGroup) {
+				$tmp = array(
+					'entity_type' => 'user_group',
+					'entity_id' => 'user_group,' . $userGroup['user_group_id'],
+					'entity_text' => $userGroup['title'],
+					'entity_safe_text' => utf8_strtolower($userGroup['title']),
+					'user_group' => $userGroup,
+				);
+				
+				$entities[$tmp['entity_safe_text']] = $tmp;
+			}
+			
 			$conditions = array();
 			foreach ($portions as $portion) {
 				$conditions[] = 'username LIKE ' . XenForo_Db::quoteLike($portion, 'r');
 			}
 
+			// we have to do manual request here because our conditions use OR operator
+			// the query is similar to XenForo_Model_User::getUsersByIds with fetch options
+			// similar to join = XenForo_Model_User::FETCH_USER_PROFILE | XenForo_Model_User::FETCH_USER_OPTION
 			$records = $db->fetchAll(
 				'SELECT user.*, user_option.*, user_profile.*
 				FROM `xf_user` AS user
@@ -267,44 +339,52 @@ class bdTagMe_Engine {
 			
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$users[utf8_strtolower($record['username'])] = $record;
+					$tmp = array(
+						'entity_type' => 'user',
+						'entity_id' => $record['user_id'],
+						'entity_text' => $record['username'],
+						'entity_safe_text' => utf8_strtolower($record['username']),
+						'user' => $record,
+					);
+					
+					$entities[$tmp['entity_safe_text']] = $tmp;
 				}
 			}
 		}
 		
-		return $users;
+		return $entities;
 	}
 	
-	protected function _getBestMatchedUserNameForPortion(&$message, $portion, $offset, array &$users) {
-		$userName = '';
-		$userNameLength = 0;
+	protected function _getBestMatchedEntitySafeTextForPortion(&$message, $portion, $offset, array &$entities) {
+		$foundSafeText = '';
+		$foundLength = 0;
 		$tmpLength = 0;
 		
-		// one-word username
-		if (isset($users[$portion])) {
-			$userName = $portion;
-			$userNameLength = utf8_strlen($userName);
+		// one-word text
+		if (isset($entities[$portion])) {
+			$foundSafeText = $portion;
+			$foundLength = utf8_strlen($foundSafeText);
 		}
 		
-		// multi-word username
-		foreach ($users as $tmpUserName => &$user) {
-			if (utf8_strpos($tmpUserName, $portion) === 0) {
+		// multi-word text
+		foreach ($entities as $tmpSafeText => &$entity) {
+			if (utf8_strpos($tmpSafeText, $portion) === 0) {
 				// we found a match, check if the length is better
-				$tmpLength = utf8_strlen($tmpUserName);
+				$tmpLength = utf8_strlen($tmpSafeText);
 				
 				$portionInMessage = utf8_strtolower(utf8_substr($message, $offset, $tmpLength));
-				if ($portionInMessage !== $tmpUserName) {
-					// the username doesn't match the message
+				if ($portionInMessage !== $tmpSafeText) {
+					// the safe text doesn't match the message
 					// of course we can't accept it
 					// since 1.4.1
 					continue;
 				}
 				
-				if ($tmpLength > $userNameLength) {
+				if ($tmpLength > $foundLength) {
 					// the length is good, change it now
-					$userName = $tmpUserName;
-					$userNameLength = $tmpLength;
-				} elseif ($tmpLength == $userNameLength) {
+					$foundSafeText = $tmpSafeText;
+					$foundLength = $tmpLength;
+				} elseif ($tmpLength == $foundLength) {
 					// additional checks here?
 					// ideas: higher message_count, is_follower, etc.
 					// TODO: think about this!
@@ -312,7 +392,7 @@ class bdTagMe_Engine {
 			}
 		}
 		
-		return $userName;
+		return $foundSafeText;
 	}
 	
 	protected function _validateOptions(array &$options) {
@@ -324,7 +404,7 @@ class bdTagMe_Engine {
 	public function renderFacebookAlike($message, array $options = array()) {
 		$rendered = $message;
 		$offset = 0;
-		$taggedUsers = array();
+		$entities = array();
 		
 		// looks for portions in the message
 		do {
@@ -337,30 +417,58 @@ class bdTagMe_Engine {
 			)) {
 				$offset = $matches[0][1];
 				$fullMatched = $matches[0][0];
-				$userId = $matches[1][0];
-				$userName = $this->_unEscapeFacebookAlike($matches[2][0]);
+				$entityId = $matches[1][0];
+				$entityText = $this->_unEscapeFacebookAlike($matches[2][0]);
 				
-				if (is_numeric($userId) AND !empty($userName)) {
-					$taggedUsers[$offset] = array('user_id' => $userId, 'username' => $userName, 'fullMatched' => $fullMatched);
+				if (!empty($userName)) {
+					// IMPORTANT: this kind of processing (user, user_group, etc.)
+					// is being done in 2 places bdTagMe_Engine::renderFacebookAlike
+					// and bdTagMe_XenForo_BbCode_Formatter_Base::bdTagMe_renderCustom
+					// please update both classes if something is changed
+					if (is_numeric($entityId)) {
+						$entities[$offset] = array(
+							'entity_type' => 'user',
+							'entity_id' => $entityId,
+							'entity_text' => $entityText,
+							'fullMatched' => $fullMatched,
+						);
+					} else {
+						$parts = explode(',', $entityId);
+						if (count($parts) == 2) {
+							switch ($parts[0]) {
+								case 'user_group':
+									$entities[$offset] = array(
+										'entity_type' => $parts[0],
+										'entity_id' => $entityId,
+										'entity_text' => $entityText,
+										'fullMatched' => $fullMatched,
+									);
+									break;
+								default:
+									// do not process unknown entity type
+							}
+						}
+					}
 				}
 				
 				$offset++; // prevent us from matching the same thing all over again
 			}
 		} while ($matched);
 		
-		if (!empty($taggedUsers)) {
+		if (!empty($entities)) {
 			// starts render the portions
-			$taggedUsers = array_reverse($taggedUsers, true);
+			$entities = array_reverse($entities, true);
 			
-			foreach ($taggedUsers as $offset => $taggedUser) {
+			foreach ($entities as $offset => $entity) {
 				if (empty($options['plaintext'])) {
 					$template = bdTagMe_Template_Helper::createTemplate('bdtagme_tag');
-					$template->setParam('userName', $taggedUser['username']);
-					$template->setParam('link', XenForo_Link::buildPublicLink('members', $taggedUser));
+					$template->setParam('entity', $entity);
 					$template->setParam('removePrefix', bdTagMe_Option::get('removePrefix'));
 					$replacement = $template->render();
 				} else {
-					$replacement = (bdTagMe_Option::get('removePrefix') ? '' : '@') . $taggedUser['username'];
+					$replacement = ''
+						. (bdTagMe_Option::get('removePrefix') ? '' : '@')
+						. htmlentities($entity['entity_text']);
 				}
 				
 				$rendered = substr($rendered, 0, $offset)
@@ -388,6 +496,17 @@ class bdTagMe_Engine {
 		), $string);
 	}
 	
+	public function getTaggableUserGroups() {
+		// return XenForo_Model::create('XenForo_Model_UserGroup')->getAllUserGroups();
+		return array(
+			array(
+				'user_group_id' => 2,
+				'title' => 'Registered',
+				'userIds' => array(2, 7),
+			)
+		);
+	}
+	
 	public static function utf8_strrpos($haystack, $needle, $offset) {
 		if (UTF8_MBSTRING) {
 			return mb_strrpos($haystack, $needle, $offset);
@@ -412,16 +531,18 @@ class bdTagMe_Engine {
 		}
 	}
 	
-	protected static $_instance = false;
-	
 	/**
 	 * @return bdTagMe_Engine
 	 */
-	public static final function getInstance() {
-		if (self::$_instance === false) {
-			self::$_instance = new bdTagMe_Engine();
+	public static function getInstance() {
+		static $instance = false;
+		
+		if ($instance === false) {
+			$instance = new bdTagMe_Engine();
 		}
 		
-		return self::$_instance;
+		return $instance;
 	}
+	private function __construct() {}
+	private function __clone() {}
 }

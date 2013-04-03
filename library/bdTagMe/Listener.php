@@ -7,6 +7,8 @@ class bdTagMe_Listener {
 		static $classes = array(
 			'XenForo_BbCode_Formatter_Base',
 		
+			'XenForo_ControllerPublic_Member',
+		
 			'XenForo_DataWriter_DiscussionMessage_Post',
 			'XenForo_DataWriter_DiscussionMessage_ProfilePost',
 			'XenForo_DataWriter_ProfilePostComment',

@@ -10,7 +10,7 @@
 		
 		this.$input = $textarea;
 		this.textarea = $textarea[0];
-		this.url = 'index.php?members/find&_xfResponseType=json';
+		this.url = 'index.php?members/tag-suggestions&_xfResponseType=json';
 
 		var options = {
 			multiple: false,
