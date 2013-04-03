@@ -436,7 +436,7 @@ class bdTagMe_Engine {
 		// looks for portions in the message
 		do {
 			if ($matched = preg_match(
-				'/@\[(\d+?):(([^\\\\\\]]|\\\\\\\\|\\\\])+?)\]/', // LOL, I'm so good at this kind of stuff!
+				'/@\[(([a-z_]+,)?(\d+)):(([^\\\\\\]]|\\\\\\\\|\\\\])+)\]/', // LOL, I'm so good at this kind of stuff!
 				$rendered,
 				$matches,
 				PREG_OFFSET_CAPTURE,
@@ -445,9 +445,9 @@ class bdTagMe_Engine {
 				$offset = $matches[0][1];
 				$fullMatched = $matches[0][0];
 				$entityId = $matches[1][0];
-				$entityText = $this->_unEscapeFacebookAlike($matches[2][0]);
+				$entityText = $this->_unEscapeFacebookAlike($matches[4][0]);
 				
-				if (!empty($userName)) {
+				if (!empty($entityText)) {
 					// IMPORTANT: this kind of processing (user, user_group, etc.)
 					// is being done in 2 places bdTagMe_Engine::renderFacebookAlike
 					// and bdTagMe_XenForo_BbCode_Formatter_Base::bdTagMe_renderCustom
@@ -500,7 +500,7 @@ class bdTagMe_Engine {
 				
 				$rendered = substr($rendered, 0, $offset)
 							. $replacement
-							. substr($rendered, $offset + strlen($taggedUser['fullMatched']));
+							. substr($rendered, $offset + strlen($entity['fullMatched']));
 			}
 		}
 		
