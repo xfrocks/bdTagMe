@@ -127,7 +127,7 @@ class bdTagMe_DataWriter_DiscussionMessagePost extends XFCP_bdTagMe_DataWriter_D
 			$quotedUserIds = $this->_getPostModel()->alertQuotedMembers($post);
 			
 			foreach ($this->taggeds as $tagged) {
-				if ($tagged['user_id'] == $post['post_id']) continue; // it's stupid to send alert to myself
+				if ($tagged['user_id'] == $post['user_id']) continue; // it's stupid to send alert to myself
 				
 				if (!$this->getModelFromCache('XenForo_Model_User')->isUserIgnored($tagged, $post['user_id'])
 					&& !in_array($tagged['user_id'], $quotedUserIds) // check for quoted user ids (and do not sending more alerts), since 1.2
