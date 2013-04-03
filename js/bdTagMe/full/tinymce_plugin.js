@@ -11,7 +11,7 @@ if (typeof tinymce != 'undefined') {
 				// xenforo/js/bdTagMe/full/tinymce_plugin.js
 				// xenforo/library/bdTagMe/Engine.php
 				this.symbol = '@';
-				this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\{}]/);
+				this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\{}'"]/);
 				
 				this.suggestionMaxLength = 0;
 				if (XenForo.bdTagMe_suggestionMaxLength) {

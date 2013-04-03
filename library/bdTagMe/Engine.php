@@ -14,8 +14,9 @@ class bdTagMe_Engine {
 	// but they have been removed to specifically support [ and ] in username
 	// if this regular expression is being reused to detect non-word characters
 	// you should consider to add [ and ] into the mix!
+	// sondh@2013-04-04 added support for apostrophe and quote mark
 	const SYMBOL = '@';
-	const REGEX = '/[\s\(\)\.,!\?:;@\\\\{}]/';
+	const REGEX = '/[\s\(\)\.,!\?:;@\\\\{}\'"]/';
 	
 	protected $_foundTagged = array();
 	
