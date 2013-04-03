@@ -5,7 +5,7 @@ class bdTagMe_FileSums
 	public static function getHashes()
 	{
 		return array (
-  'library/bdTagMe/Engine.php' => '20f03ec4f3f7aca0bf276cdbe5c09792',
+  'library/bdTagMe/Engine.php' => '7d8431e41b39510ee00b5b5b4e1d7609',
   'library/bdTagMe/Listener.php' => '73472de36c01270acdf1ae84bc537c00',
   'library/bdTagMe/Option.php' => '0d4765444ee60acb421ee2f5dd017036',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',

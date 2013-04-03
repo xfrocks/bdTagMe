@@ -84,7 +84,7 @@ class bdTagMe_Engine {
 			$errorInfo = array(
 				self::ERROR_TOO_MANY_TAGGED,
 				array(
-					'max' => $max,
+					'max' => $options['max'],
 					'count' => count($tagged),
 				)
 			);
