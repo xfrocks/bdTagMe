@@ -74,6 +74,12 @@ class bdTagMe_Engine {
 					if (!empty($userName)) {
 						$this->_replacePortionInText($message, $userName, $offset, $users[$userName], $options);
 						$tagged[$userName] = $users[$userName];
+						
+						// sondh@2012-09-06
+						// moved link building from _getBestMatchedUserNameForPortion() to here
+						// to reduce resource consumption
+						// as suggested by Adonis Figueroa
+						$tagged[$userName]['link'] = XenForo_Link::buildPublicLink('canoncial:members', $tagged[$userName]);
 					}
 				}
 			}
@@ -261,7 +267,6 @@ class bdTagMe_Engine {
 			
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$record['link'] = XenForo_Link::buildPublicLink('full:members', $record);
 					$users[strtolower($record['username'])] = $record;
 				}
 			}
