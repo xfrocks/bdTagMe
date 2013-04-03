@@ -43,8 +43,7 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
 		/* @var $postModel XenForo_Model_Post */
 		$postModel = $this->_getPostModel();
 		
-		$post['bdTagMe_alertQuotedMembers_useCache'] = true; // allows alertQuotedMembers to use cache
-		$quotedUserIds = $postModel->alertQuotedMembers($post);
+		$quotedUserIds = $postModel->bdTagMe_getQuotedUserIds($post);
 		
 		$engine->notifyTaggedUsers2(
 			self::BDTAGME_UNIQUE_ID,

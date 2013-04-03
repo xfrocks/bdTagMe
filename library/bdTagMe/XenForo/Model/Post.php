@@ -7,18 +7,18 @@ class bdTagMe_XenForo_Model_Post extends XFCP_bdTagMe_XenForo_Model_Post {
 	public function alertQuotedMembers(array $post) {
 		$hash = md5($post['message']);
 		
-		if (!empty($post['bdTagMe_alertQuotedMembers_useCache'])) {
-			if (isset(self::$_quotedUserIdsCache[$hash])) {
-				// good
-			} else {
-				// skip running the original code
-				self::$_quotedUserIdsCache[$hash] = array();
-			}
-		} else {
-			// runs the original code
-			self::$_quotedUserIdsCache[$hash] = parent::alertQuotedMembers($post);
-		}
+		self::$_quotedUserIdsCache[$hash] = parent::alertQuotedMembers($post);
 		
 		return self::$_quotedUserIdsCache[$hash];
+	}
+	
+	public function bdTagMe_getQuotedUserIds(array $post) {
+		$hash = md5($post['message']);
+		
+		if (isset(self::$_quotedUserIdsCache[$hash])) {
+			return self::$_quotedUserIdsCache[$hash];
+		} else {
+			return array();
+		}
 	}
 }
