@@ -91,7 +91,16 @@ class bdTagMe_Engine {
 			return false;
 		}
 		
-		$this->_foundTagged[$uniqueId] = $tagged;
+		if (isset($this->_foundTagged[$uniqueId])) {
+			// this message has been processed before?
+			// probably a conflict with some other add-ons
+			// we will just merge the data
+			// this fix was suggested by Julio Franco@xenforo.com
+			// TODO: skip processing?
+			$this->_foundTagged[$uniqueId] = array_merge($this->_foundTagged[$uniqueId], $tagged);
+		} else {
+			$this->_foundTagged[$uniqueId] = $tagged;
+		}
 		
 		return true;
 	}
