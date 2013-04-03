@@ -557,6 +557,23 @@ class bdTagMe_Engine {
 		}
 	}
 	
+	public function updateTaggableUserGroups(array $userGroupIds, XenForo_DataWriter_User $dw) {
+		$taggableUserGroups = $this->getTaggableUserGroups();
+		$isChanged = false;
+		
+		foreach ($taggableUserGroups as &$taggableUserGroup) {
+			if (in_array($taggableUserGroup['user_group_id'], $userGroupIds)) {
+				// this user group need to be updated
+				$taggableUserGroup['userIds'] = $dw->getModelFromCache('XenForo_Model_User')->bdTagMe_getUserIdsByUserGroupId($taggableUserGroup['user_group_id']);
+				$isChanged = true;
+			}
+		}
+		
+		if ($isChanged) {
+			XenForo_Application::setSimpleCacheData(self::SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS, $taggableUserGroups);
+		}
+	}
+	
 	public static function utf8_strrpos($haystack, $needle, $offset) {
 		if (UTF8_MBSTRING) {
 			return mb_strrpos($haystack, $needle, $offset);

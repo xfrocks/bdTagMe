@@ -13,6 +13,7 @@ class bdTagMe_Listener {
 			'XenForo_DataWriter_DiscussionMessage_Post',
 			'XenForo_DataWriter_DiscussionMessage_ProfilePost',
 			'XenForo_DataWriter_ProfilePostComment',
+			'XenForo_DataWriter_User',
 			'XenForo_DataWriter_UserGroup',
 		
 			'XenForo_Model_Post',
