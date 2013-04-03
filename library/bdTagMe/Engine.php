@@ -136,6 +136,7 @@ class bdTagMe_Engine {
 		// prepare options
 		$defaultOptions = array(
 			'max'           		=> 10,			// maximum tags in a message, -1 means unlimited
+			'groupTag'				=> false,		// allowed to tag user groups (number of users in each group is accounted for `max`)
 			'mode'          		=> 'custom',	// working mode (url | custom | facebookAlike | dontChange)
 			'modeCustomTag' 		=> 'USER',		// custom mode's tag
 			'removePrefix'  		=> true,		// remove prefix when render
@@ -401,17 +402,19 @@ class bdTagMe_Engine {
 		$entities = array();
 		
 		if (!empty($portions)) {
-			$userGroups = $this->getTaggableUserGroups();
-			foreach ($userGroups as $userGroup) {
-				$tmp = array(
-					'entity_type' => 'user_group',
-					'entity_id' => 'user_group,' . $userGroup['user_group_id'],
-					'entity_text' => $userGroup['title'],
-					'entity_safe_text' => utf8_strtolower($userGroup['title']),
-					'user_group' => $userGroup,
-				);
-				
-				$entities[$tmp['entity_safe_text']] = $tmp;
+			if (!empty($options['groupTag'])) {
+				$userGroups = $this->getTaggableUserGroups();
+				foreach ($userGroups as $userGroup) {
+					$tmp = array(
+						'entity_type' => 'user_group',
+						'entity_id' => 'user_group,' . $userGroup['user_group_id'],
+						'entity_text' => $userGroup['title'],
+						'entity_safe_text' => utf8_strtolower($userGroup['title']),
+						'user_group' => $userGroup,
+					);
+					
+					$entities[$tmp['entity_safe_text']] = $tmp;
+				}
 			}
 			
 			$conditions = array();

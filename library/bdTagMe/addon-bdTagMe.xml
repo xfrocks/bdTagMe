@@ -79,6 +79,7 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
   <permissions>
     <permission_groups/>
     <permissions>
+      <permission permission_group_id="general" permission_id="bdtagme_groupTag" permission_type="flag" default_value="unset" interface_group_id="generalPermissions" display_order="9999"/>
       <permission permission_group_id="general" permission_id="bdtagme_max" permission_type="integer" default_value_int="0" interface_group_id="generalPermissions" display_order="9999"/>
     </permissions>
     <interface_groups/>
@@ -117,7 +118,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <phrase title="option_bdtagme_userGroupGravatar_explain" version_id="25" version_string="1.5.9"><![CDATA[User groups will show up in suggestion list with a small image. You can use any image you want by uploading to <a href="http://gravatar.com/" tabindex="-1">Gravatar</a> and enter the email address here.]]></phrase>
     <phrase title="option_group_bdtagme" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me]]></phrase>
     <phrase title="option_group_bdtagme_description" version_id="8" version_string="1.2.3"><![CDATA[]]></phrase>
-    <phrase title="permission_general_bdtagme_max" version_id="25" version_string="1.5.9"><![CDATA[[Tag Me] Maximum @tag/message]]></phrase>
+    <phrase title="permission_general_bdtagme_groupTag" version_id="40" version_string="1.6.6"><![CDATA[[Tag Me] Tag group]]></phrase>
+    <phrase title="permission_general_bdtagme_max" version_id="40" version_string="1.6.6"><![CDATA[[Tag Me] Maximum tag/message]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>

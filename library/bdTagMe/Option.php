@@ -14,6 +14,10 @@ class bdTagMe_Option {
 				$visitor = XenForo_Visitor::getInstance();
 				return $visitor->hasPermission('general', 'bdtagme_max');
 				break;
+			case 'groupTag':
+				$visitor = XenForo_Visitor::getInstance();
+				return $visitor->hasPermission('general', 'bdtagme_groupTag');
+				break;
 			case 'modeCustomTag': return $options->get('bdtagme_mode_custom_tag'); // legacy support
 			case 'removePrefix': return $options->get('bdtagme_remove_prefix'); // legacy support
 		}

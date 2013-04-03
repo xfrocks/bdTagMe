@@ -68,7 +68,7 @@ class bdTagMe_XenForo_ControllerPublic_Member extends XFCP_bdTagMe_XenForo_Contr
 			$q = utf8_strtolower($this->_input->filterSingle('q', XenForo_Input::STRING));
 			$qLen = utf8_strlen($q);
 			
-			if ($qLen > 0) {
+			if ($qLen > 0 AND bdTagMe_Option::get('groupTag')) {
 				$userGroups = bdTagMe_Engine::getInstance()->getTaggableUserGroups();
 				
 				foreach ($userGroups as $userGroup) {

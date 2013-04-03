@@ -9,6 +9,7 @@ class bdTagMe_XenForo_DataWriter_ProfilePostComment extends XFCP_bdTagMe_XenForo
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
 				'max'					=> bdTagMe_Option::get('max'),
+				'groupTag'				=> bdTagMe_Option::get('groupTag'),
 				'mode'					=> 'facebookAlike',
 				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
 			);

@@ -5,16 +5,16 @@ class bdTagMe_FileSums
 	public static function getHashes()
 	{
 		return array (
-  'library/bdTagMe/Engine.php' => 'a784137fc75dfce59f439970ad6bed0d',
+  'library/bdTagMe/Engine.php' => 'bc011d4634171b5be367e73a944c5d8c',
   'library/bdTagMe/Listener.php' => '8be8d3518c8e15a00f2e399ff16af98b',
-  'library/bdTagMe/Option.php' => '345a57139d4c4f4553114471aa2478c2',
+  'library/bdTagMe/Option.php' => '448e6e18444b16b9d82bd85ec3bc5cc4',
   'library/bdTagMe/Template/Helper.php' => '1e48720d1143142e08b2a064490c8636',
   'library/bdTagMe/XenForo/BbCode/Formatter/Base.php' => '9c2a653bb2b177153f6c83bd95ec07ce',
   'library/bdTagMe/XenForo/ControllerAdmin/UserGroup.php' => '3d27724080d9ee0aca1e2fc89b498f15',
-  'library/bdTagMe/XenForo/ControllerPublic/Member.php' => '779bb81c39b89bd6d389dc637ff94fcd',
-  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => '586c6cd18b47862ac57fb02f0e2e3f83',
-  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/ProfilePost.php' => '61e7e117e53e6718d878d9e4d3f3094e',
-  'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => '80d47f52624b69b13fd35d09024d374e',
+  'library/bdTagMe/XenForo/ControllerPublic/Member.php' => 'd07c70f73b32ab7fedf0270aed987dea',
+  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/Post.php' => '4a4047ff18e98e4185a50363924ca269',
+  'library/bdTagMe/XenForo/DataWriter/DiscussionMessage/ProfilePost.php' => '815261b173604b16139f6cdbd8b2584d',
+  'library/bdTagMe/XenForo/DataWriter/ProfilePostComment.php' => 'f85d3711b671e0e80fb19f1adc63a906',
   'library/bdTagMe/XenForo/DataWriter/User.php' => 'e84bd33415814c6e0eaa671c9e234ae9',
   'library/bdTagMe/XenForo/DataWriter/UserGroup.php' => '0d3e64c97ee6a172587853fc1be5d812',
   'library/bdTagMe/XenForo/Model/Alert.php' => 'bd3836ffb950906628dbfcf10d11f656',
