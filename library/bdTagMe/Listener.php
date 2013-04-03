@@ -8,7 +8,8 @@ class bdTagMe_Listener {
 			'XenForo_BbCode_Formatter_Base',
 		
 			'XenForo_ControllerAdmin_UserGroup',
-			'XenForo_ControllerPublic_Member',
+			'XenForo_ControllerPublic_Account',
+			'XenForo_ControllerPublic_Member', 
 		
 			'XenForo_DataWriter_DiscussionMessage_Post',
 			'XenForo_DataWriter_DiscussionMessage_ProfilePost',
@@ -50,6 +51,9 @@ class bdTagMe_Listener {
 				$template->preloadTemplate('bdtagme_account_alerts_messages_in_threads');
 				$template->preloadTemplate('bdtagme_account_alerts_messages_on_profile_pages');
 				break;
+			case 'account_contact_details':
+				$template->preloadTemplate('bdtagme_account_contact_details_messaging');
+				break;
 				
 			case 'user_group_edit': // admincp
 			case 'editor':
@@ -63,6 +67,7 @@ class bdTagMe_Listener {
 		switch ($hookName) {
 			case 'account_alerts_messages_in_threads':
 			case 'account_alerts_messages_on_profile_pages':
+			case 'account_contact_details_messaging':
 				$ourTemplate = $template->create('bdtagme_' . $hookName, $template->getParams());
 				$contents .= $ourTemplate->render();
 				break;

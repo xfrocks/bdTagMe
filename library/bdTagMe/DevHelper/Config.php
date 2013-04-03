@@ -1,8 +1,13 @@
 <?php
 class bdTagMe_DevHelper_Config extends DevHelper_Config_Base {
 	protected $_dataClasses = array();
-	protected $_dataPatches = array();
+	protected $_dataPatches = array(
+		'xf_user_option' => array(
+			'bdtagme_email' => array('name' => 'bdtagme_email', 'type' => 'uint', 'default' => 0, 'required' => true)
+		)
+	);
 	protected $_exportPath = '/Users/sondh/Dropbox/XenForo/bdTagMe';
+	protected $_exportIncludes = array();
 	
 	/**
 	 * Return false to trigger the upgrade!
@@ -24,6 +29,7 @@ class bdTagMe_DevHelper_Config extends DevHelper_Config_Base {
 					// 'required' => true,
 					// 'allowedValues' => array('value_1', 'value_2'), 
 					// 'default' => 0,
+					// 'autoIncrement' => true,
 				),
 				// other fields go here
 			),

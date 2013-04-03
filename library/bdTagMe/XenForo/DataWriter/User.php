@@ -2,6 +2,22 @@
 
 class bdTagMe_XenForo_DataWriter_User extends XFCP_bdTagMe_XenForo_DataWriter_User {
 	
+	protected function _getFields() {
+		$fields = parent::_getFields();
+		
+		$fields['xf_user_option']['bdtagme_email'] = array('type' => self::TYPE_BOOLEAN, 'default' => 0);
+		
+		return $fields;
+	}
+	
+	protected function _preSave() {
+		if (isset($GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave'])) {
+			$GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave']->bdTagMe_actionContactDetailsSave($this);
+		}
+		
+		return parent::_preSave();
+	}
+	
 	protected function _postSave() {
 		$changedUserGroupIds = array();
 		

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6.6" version_id="40" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6.6" version_id="40" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -26,9 +26,44 @@
     <listener event_id="template_post_render" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_post_render" active="1" description=""/>
   </code_event_listeners>
   <cron/>
-  <email_templates/>
+  <email_templates>
+    <template title="bdtagme_tagged">
+      <subject><![CDATA[{xen:phrase bdtagme_email_tagged_subject, 
+	"username={$sender.username}",
+	"board_title={$xenOptions.boardTitle}"
+}]]></subject>
+      <body_text><![CDATA[{xen:phrase bdtagme_email_tagged_text, 
+	"receiver_username={$receiver.username}",
+	"username={$sender.username}",
+	"view_link={xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}",
+	"prefs_link={xen:link 'canonical:account/contact-details'}",
+	"board_link={xen:link 'canonical:index'}",
+	"board_title={$xenOptions.boardTitle}"
+}]]></body_text>
+      <body_html><![CDATA[<p style="margin-top: 0">{xen:phrase bdtagme_email_tagged_html_1,
+	"receiver_username={$receiver.username}",
+	'username=<a href="{xen:link canonical:members, $sender}" style="color: #176093; text-decoration: none">{$sender.username}</a>',
+	'board_title=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
+
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}" style="color: #141414; text-decoration: none">{xen:phrase bdtagme_email_tagged_html_2}<br />
+	<span style="color: #176093; font-size: 10px">{xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}</span></a></h2>
+
+<p style="font-size: 11px; color: #969696">{xen:phrase bdtagme_email_tagged_html_footer_1,
+	'board_title=<a href="{xen:link canonical:index}" style="color: #969696">{$xenOptions.boardTitle}</a>'}</p>
+
+<p style="font-size: 11px; color: #969696">{xen:phrase bdtagme_email_tagged_html_footer_2,
+	'prefs_link={xen:link canonical:account/contact-details}',
+	'link_style=color: #969696'}</p>]]></body_html>
+    </template>
+  </email_templates>
   <optiongroups>
     <group group_id="bdtagme" display_order="9999" debug_only="0"/>
+    <option option_id="bdtagme_alertEmail" edit_format="onoff" data_type="unsigned_integer" can_backup="1">
+      <default_value>1</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="20"/>
+    </option>
     <option option_id="bdtagme_alertInBatch" edit_format="onoff" data_type="unsigned_integer" can_backup="1">
       <default_value>1</default_value>
       <edit_format_params></edit_format_params>
@@ -85,9 +120,29 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <interface_groups/>
   </permissions>
   <phrases>
+    <phrase title="bdtagme_email_tagged_html_1" version_id="40" version_string="1.6.6"><![CDATA[{receiver_username}, {username} tagged you at {board_title}.]]></phrase>
+    <phrase title="bdtagme_email_tagged_html_2" version_id="40" version_string="1.6.6"><![CDATA[To view the tagged content, click here]]></phrase>
+    <phrase title="bdtagme_email_tagged_html_footer_1" version_id="40" version_string="1.6.6"><![CDATA[This message was sent to you from {board_title} because your preferences are set to receive email when somebody tags you.]]></phrase>
+    <phrase title="bdtagme_email_tagged_html_footer_2" version_id="40" version_string="1.6.6"><![CDATA[To stop receiving email, please <a href="{prefs_link}" style="{link_style}">edit your account preferences</a>.]]></phrase>
+    <phrase title="bdtagme_email_tagged_subject" version_id="40" version_string="1.6.6"><![CDATA[{username} tagged you at {board_title}]]></phrase>
+    <phrase title="bdtagme_email_tagged_text" version_id="40" version_string="1.6.6"><![CDATA[{receiver_username}, {username} tagged you at {board_title}.
+
+To view the tagged content, click here:
+{view_link}
+
+----------------------------------------------------------------------
+
+This message was sent to you from {board_title} because your preferences are set to receive email when somebody tags you.
+
+To stop receiving email, please edit your account preferences:
+{prefs_link}
+
+{board_link}]]></phrase>
     <phrase title="bdtagme_members_count" version_id="27" version_string="1.6-dev"><![CDATA[Members Count]]></phrase>
     <phrase title="bdtagme_mode_custom" version_id="3" version_string="1.0"><![CDATA[Custom]]></phrase>
     <phrase title="bdtagme_mode_url" version_id="3" version_string="1.0"><![CDATA[URL]]></phrase>
+    <phrase title="bdtagme_receive_email_when_tagged" version_id="40" version_string="1.6.6"><![CDATA[Receive email when someone tagged you]]></phrase>
+    <phrase title="bdtagme_receive_email_when_tagged_explain" version_id="40" version_string="1.6.6"><![CDATA[Email notifications for mentions from threads, replies, profile posts, etc.]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_comment_on_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone comments on a profile post with you tagged]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a profile post]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_thread" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a thread]]></phrase>
@@ -102,6 +157,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <phrase title="bdtagme_x_tagged_you_in_post_y" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in the post {title}]]></phrase>
     <phrase title="bdtagme_you_can_only_tag_x_people" version_id="8" version_string="1.2.3"><![CDATA[You can only tag {max} people. You have tagged {count} people, please remove some of them and try again...]]></phrase>
     <phrase title="bdtagme_you_have_no_permission_to_tag" version_id="25" version_string="1.5.9"><![CDATA[You don't have permission to tag people in messages.]]></phrase>
+    <phrase title="option_bdtagme_alertEmail" version_id="40" version_string="1.6.6"><![CDATA[Send Alert Emails]]></phrase>
+    <phrase title="option_bdtagme_alertEmail_explain" version_id="40" version_string="1.6.6"><![CDATA[Enable this option to send alert emails in addition to builtin notification system. Users still need to enable the option in /account/preferences to start receiving emails.]]></phrase>
     <phrase title="option_bdtagme_alertInBatch" version_id="30" version_string="1.6.1-dev"><![CDATA[Send Alerts in Batches]]></phrase>
     <phrase title="option_bdtagme_alertInBatch_explain" version_id="30" version_string="1.6.1-dev"><![CDATA[Enable this option to send alerts in batches (instead of one by one). This may improve performance especially when user group tagging is used frequently. However, this may have conflict with other add-ons.]]></phrase>
     <phrase title="option_bdtagme_maxUsersPerPortion" version_id="38" version_string="1.6.4"><![CDATA[Maximum Users in Processing]]></phrase>
@@ -173,6 +230,10 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 <li><input type="hidden" name="alertSet[profile_post_comment_tagged]" value="1" />
 	<label><input type="checkbox" value="1" name="alert[profile_post_comment_tagged]" {xen:checked "!{$alertOptOuts.profile_post_comment_tagged}"} /> {xen:phrase bdtagme_tags_you_in_a_comment}</label>
 	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_comment_on_a_profile_post}</p>
+</li>]]></template>
+    <template title="bdtagme_account_contact_details_messaging" version_id="40" version_string="1.6.6"><![CDATA[<li><label for="ctrl_bdtagme_email"><input type="checkbox" name="bdtagme_email" value="1" id="ctrl_bdtagme_email" {xen:checked '{$visitor.bdtagme_email}'} />
+	{xen:phrase bdtagme_receive_email_when_tagged}</label>
+	<p class="hint">{xen:phrase bdtagme_receive_email_when_tagged_explain}</p>
 </li>]]></template>
     <template title="bdtagme_editor" version_id="15" version_string="1.4.4.2"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
 <script type="text/javascript">
