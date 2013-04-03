@@ -62,13 +62,17 @@ class bdTagMe_Listener {
 				
 				$contents = str_replace($search, $replace, $contents);
 				break;
+				
+			case 'body':
+				$ourTemplate = $template->create('bdtagme_PAGE_CONTAINER', $template->getParams());
+				$contents .= $ourTemplate->render();
+				break;
 		}
 	}
 	
 	public static function template_post_render($templateName, &$content, array &$containerData, XenForo_Template_Abstract $template) {
 		switch ($templateName) {
 			case 'editor':
-			case 'PAGE_CONTAINER':
 				$ourTemplate = $template->create('bdtagme_' . $templateName, $template->getParams());
 				$content .= $ourTemplate->render();
 				break;

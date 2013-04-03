@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.5.4" version_id="20" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.5.5" version_id="21" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -152,7 +152,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 	];
 } (jQuery, this, document);
 </script>]]></template>
-    <template title="bdtagme_PAGE_CONTAINER" version_id="15" version_string="1.4.4.2"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
+    <template title="bdtagme_PAGE_CONTAINER" version_id="20" version_string="1.5.4"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
+
 <script type="text/javascript">
 !function($, window, document, _undefined) {
 	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};

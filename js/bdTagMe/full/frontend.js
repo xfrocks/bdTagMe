@@ -120,6 +120,14 @@
 			}
 		}
 		
+		// check to make sure there no spaces in front of our text
+		// since 1.5.5
+		if (valueFound) {
+			if (tmp != tmp.replace(/^\s+/, '')) {
+				valueFound = false;
+			}
+		}
+		
 		if (valueFound) {
 			// something has been found!
 			value = tmp;
