@@ -13,6 +13,53 @@ class bdTagMe_XenForo_ControllerPublic_Member extends XFCP_bdTagMe_XenForo_Contr
 		
 	}
 	
+	public function actionTagged() {
+		$entityId = $this->_input->filterSingle('entity_id', XenForo_Input::STRING);
+		
+		if (is_numeric($entityId)) {
+			// numeric entity id is reserved for users
+			// perform the redirect here
+			return $this->responseRedirect(
+				XenForo_ControllerResponse_Redirect::RESOURCE_CANONICAL_PERMANENT,
+				XenForo_Link::buildPublicLink('members', array('user_id' => $entityId))
+			);
+		}
+		
+		$parts = explode(',', $entityId);
+		if (count($parts) != 2) {
+			return $this->responseNoPermission();
+		}
+		
+		switch ($parts[0]) {
+			case 'user_group':
+				$userGroupId = intval($parts[1]);
+				$engine = bdTagMe_Engine::getInstance();
+				$taggableUserGroups = $engine->getTaggableUserGroups();
+				
+				if (!isset($taggableUserGroups[$userGroupId])) {
+					// hmm, the requested user group is not taggable...
+					return $this->responseNoPermission();
+				}
+				$userGroup = $taggableUserGroups[$userGroupId];
+
+				if (isset($userGroup['userIds'])) {
+					$users = $this->getModelFromCache('XenForo_Model_User')->getUsersByIds($userGroup['userIds']);
+				} else {
+					$users = array();
+				}
+				
+				$viewParams = array(
+					'users' => $users,
+					'userGroup' => $userGroup,
+				);
+		
+				return $this->responseView('bdTagMe_ViewPublic_Member_Tagged_UserGroup', 'bdtagme_members_tagged_user_group', $viewParams);
+			default:
+				// unknown entity type
+				return $this->responseNoPermission();
+		}
+	}
+	
 	public function actionTagSuggestions() {
 		$response = parent::actionFind();
 		

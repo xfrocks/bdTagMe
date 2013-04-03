@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6-dev" version_id="27" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.6-dev" version_id="28" url="" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -7,7 +7,7 @@
     <template title="bdtagme_user_group_edit"><![CDATA[<xen:checkboxunit label="" explain="{xen:phrase bdtagme_user_group_is_taggable_explain}">
 	<xen:option name="bdTagMe_isTaggable" selected="{$bdTagMe_isTaggable}">
 		{xen:phrase bdtagme_user_group_is_taggable}
-		{xen:if '{$bdTagMe_isTaggable} AND {$bdTagMe_usersCount} > 0', ' ({xen:phrase bdtagme_users_count}: {xen:number $bdTagMe_usersCount})'}
+		{xen:if '{$bdTagMe_isTaggable} AND {$bdTagMe_usersCount} > 0', ' ({xen:phrase bdtagme_members_count}: {xen:number $bdTagMe_usersCount})'}
 	</xen:option>
 </xen:checkboxunit>]]></template>
   </admin_templates>
@@ -19,6 +19,7 @@
     <listener event_id="load_class_controller" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_datawriter" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_model" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="load_class_route_prefix" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_view" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="template_create" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_create" active="1" description=""/>
     <listener event_id="template_hook" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_hook" active="1" description=""/>
@@ -78,6 +79,7 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <interface_groups/>
   </permissions>
   <phrases>
+    <phrase title="bdtagme_members_count" version_id="27" version_string="1.6-dev"><![CDATA[Members Count]]></phrase>
     <phrase title="bdtagme_mode_custom" version_id="3" version_string="1.0"><![CDATA[Custom]]></phrase>
     <phrase title="bdtagme_mode_url" version_id="3" version_string="1.0"><![CDATA[URL]]></phrase>
     <phrase title="bdtagme_someone_tags_you_in_a_comment_on_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone comments on a profile post with you tagged]]></phrase>
@@ -85,9 +87,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
     <phrase title="bdtagme_someone_tags_you_in_a_thread" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a thread]]></phrase>
     <phrase title="bdtagme_tags_you" version_id="3" version_string="1.0"><![CDATA[Tags you]]></phrase>
     <phrase title="bdtagme_tags_you_in_a_comment" version_id="9" version_string="1.4"><![CDATA[Tags you in a comment]]></phrase>
-    <phrase title="bdtagme_users_count" version_id="25" version_string="1.5.9"><![CDATA[Users Count]]></phrase>
     <phrase title="bdtagme_user_group_is_taggable" version_id="25" version_string="1.5.9"><![CDATA[Is taggable]]></phrase>
-    <phrase title="bdtagme_user_group_is_taggable_explain" version_id="25" version_string="1.5.9"><![CDATA[Check this box to allow people to tag this user group's members using @usergroup syntax.]]></phrase>
+    <phrase title="bdtagme_user_group_is_taggable_explain" version_id="27" version_string="1.6-dev"><![CDATA[Check this box to allow people to tag this user group's members using @usergroup syntax. Please note that allowing a group to be taggable will make the group member list available for all to see. It's also not recommended to enable this option for groups that have a lot of members.]]></phrase>
     <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s profile page.]]></phrase>
     <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s status.]]></phrase>
     <phrase title="bdtagme_x_tagged_you_in_a_post_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>post</a> on {receiverUsername}'s profile page.]]></phrase>
@@ -151,6 +152,7 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 		'receiverUsername={xen:helper username, {xen:array 'user_id={$content.profile_user_id}', 'username={$content.profile_username}'}}'
 	}
 </xen:if>]]></template>
+    <template title="bdtagme.css" version_id="27" version_string="1.6-dev"><![CDATA[.xenOverlay .bdTagMe_TaggedUserGroupMemberList { max-height: 300px; overflow-y: scroll; }]]></template>
     <template title="bdtagme_account_alerts_messages_in_threads" version_id="9" version_string="1.4"><![CDATA[<li><input type="hidden" name="alertSet[post_tagged]" value="1" />
 	<label><input type="checkbox" value="1" name="alert[post_tagged]" {xen:checked "!{$alertOptOuts.post_tagged}"} /> {xen:phrase bdtagme_tags_you}</label>
 	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_thread}</p>
@@ -175,6 +177,21 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 	];
 } (jQuery, this, document);
 </script>]]></template>
+    <template title="bdtagme_members_tagged_user_group" version_id="27" version_string="1.6-dev"><![CDATA[<xen:title>{$userGroup.title}</xen:title>
+
+<xen:require css="member_list.css" />
+<xen:require css="xenforo_member_list_item.css" />
+<xen:require css="bdtagme.css" />
+	
+<div class="section">
+	<ol class="memberList bdTagMe_TaggedUserGroupMemberList">
+		<xen:foreach loop="$users" value="$user">
+			<xen:include template="member_list_item">
+				<xen:set var="$noOverlay">1</xen:set>
+			</xen:include>
+		</xen:foreach>
+	</ol>
+</div>]]></template>
     <template title="bdtagme_PAGE_CONTAINER" version_id="20" version_string="1.5.4"><![CDATA[<xen:require js="js/bdTagMe/frontend.js" />
 
 <script type="text/javascript">
@@ -182,8 +199,8 @@ url = {xen:phrase bdtagme_mode_url}</edit_format_params>
 	XenForo.bdTagMe_suggestionMaxLength = {xen:calc '0 + {xen:helper bdTagMe_option, suggestionMaxLength}'};
 } (jQuery, this, document);
 </script>]]></template>
-    <template title="bdtagme_tag" version_id="25" version_string="1.5.9"><![CDATA[<xen:comment>It's important to NOT break line in this template. You have been warned!</xen:comment>
-<xen:if is="{$entity.entity_type} == 'user'">{xen:if '!{$removePrefix}', '@'}<a href="{xen:link members, {xen:array 'user_id={$entity.entity_id}', 'username={$entity.entity_text}'}}" class="username bdTagMe_TaggedUser">{$entity.entity_text}</a><xen:elseif is="{$entity.entity_type} == 'user_group'" />{xen:if '!{$removePrefix}', '@'}<a href="{xen:link members, '', 'tagged={$entity.entity_id}'}" class="OverlayTrigger bdTagMe_TaggedUserGroup">{$entity.entity_text}</a><xen:else />{xen:if '!{$removePrefix}', '@'}{$entity.entity_text}</xen:if>]]></template>
+    <template title="bdtagme_tag" version_id="27" version_string="1.6-dev"><![CDATA[<xen:comment>It's important to NOT break line in this template. You have been warned!</xen:comment>
+<xen:if is="{$entity.entity_type} == 'user'">{xen:if '!{$removePrefix}', '@'}<a href="{xen:link members, {xen:array 'user_id={$entity.entity_id}', 'username={$entity.entity_text}'}}" class="username bdTagMe_TaggedUser">{$entity.entity_text}</a><xen:elseif is="{$entity.entity_type} == 'user_group'" />{xen:if '!{$removePrefix}', '@'}<a href="{xen:link 'members/tagged', $entity}" class="OverlayTrigger bdTagMe_TaggedUserGroup">{$entity.entity_text}</a><xen:else />{xen:if '!{$removePrefix}', '@'}{$entity.entity_text}</xen:if>]]></template>
   </templates>
   <bb_code_media_sites/>
 </addon>

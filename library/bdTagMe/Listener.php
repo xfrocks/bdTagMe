@@ -20,6 +20,8 @@ class bdTagMe_Listener {
 			'XenForo_Model_ProfilePost',
 			'XenForo_Model_User',
 		
+			'XenForo_Route_Prefix_Members',
+		
 			'XenForo_ViewPublic_Member_Post',
 		);
 		
