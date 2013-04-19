@@ -1,15 +1,11 @@
 <?php
 
 class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost {
-	
+
 	const BDTAGME_UNIQUE_ID = 'profile-post-new';
-	
-	protected $_messagePreSaveCalled = false;
-	
+
 	public function set($field, $value, $tableName = '', array $options = null) {
-		if ($field == 'message'
-			AND $this->_messagePreSaveCalled !== false
-		) {
+		if ($field == 'message') {
 			$engine = bdTagMe_Engine::getInstance();
 			$options = array(
 				'max'					=> bdTagMe_Option::get('max'),
@@ -24,9 +20,9 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 			}
 		}
 		
-		parent::set($field,$value,$tableName,$options);
+		return parent::set($field,$value,$tableName,$options);
 	}
-	
+
 	protected function _postSaveAfterTransaction() {
 		parent::_postSaveAfterTransaction();
 
@@ -46,11 +42,5 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 			),
 			$profilePostModel
 		);
-	}
-	
-	protected function _messagePreSave() {
-		$this->_messagePreSaveCalled = true;
-		
-		return parent::_messagePreSave();
 	}
 }
