@@ -23,6 +23,8 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 	
 	public function preLoadTemplates(XenForo_View $view) {
 		$view->preLoadTemplate('bdtagme_tag');
+		
+		return parent::preLoadTemplates($view);
 	}
 	
 	public function bdTagMe_renderCustom(array $tag, array $rendererStates) {
