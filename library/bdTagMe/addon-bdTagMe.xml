@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.2b" version_id="44" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.2c" version_id="45" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -240,7 +240,7 @@ To stop receiving email, please edit your account preferences:
 		<p class="hint">{xen:phrase bdtagme_receive_email_when_tagged_explain}</p>
 	</li>
 </xen:if>]]></template>
-    <template title="bdtagme_editor" version_id="15" version_string="1.4.4.2"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
+    <template title="bdtagme_editor" version_id="44" version_string="1.7.2b"><![CDATA[<xen:require js="js/bdTagMe/tinymce_plugin.js" />
 <script type="text/javascript">
 !function($, window, document, _undefined) {
 	XenForo.bdTagMe_enabledTemplates = [
@@ -248,6 +248,7 @@ To stop receiving email, please edit your account preferences:
 		'post_edit_inline', // this one is not needed actually
 		'thread_create',
 		'thread_view',
+		'thread_reply',
 		<xen:hook name="bdtagme_enabled_templates" />
 	];
 } (jQuery, this, document);
