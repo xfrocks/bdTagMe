@@ -289,7 +289,8 @@ class bdTagMe_Engine {
 				) {
 					// only saves the portion if it is valid
 					// 1. not in between URL tags
-					// 2. (to be added)
+					// 2. not in between PLAIN tags
+					// *. (to be added)
 					
 					$portion = utf8_strtolower(utf8_trim(utf8_substr($message, $offset, $foundLength)));
 					
@@ -498,6 +499,14 @@ class bdTagMe_Engine {
 					// the safe text doesn't match the message
 					// of course we can't accept it
 					// since 1.4.1
+					continue;
+				}
+				
+				$nextChar = utf8_substr($message, $offset + $tmpLength, 1);
+				if (!preg_match(self::REGEX, $nextChar)) {
+					// the next one is a text-character
+					// which means it is within another word -> refuse asap
+					// since 1.7.3
 					continue;
 				}
 				
