@@ -502,12 +502,22 @@ class bdTagMe_Engine {
 					continue;
 				}
 				
-				$nextChar = utf8_substr($message, $offset + $tmpLength, 1);
-				if (!preg_match(self::REGEX, $nextChar)) {
-					// the next one is a text-character
-					// which means it is within another word -> refuse asap
-					// since 1.7.3
-					continue;
+				$nextCharPos = $offset + $tmpLength;
+				if ($nextCharPos === utf8_strlen($message))
+				{
+					// the found text is at the end of the message
+					// no need to check if it is a text-character or not
+					// since 1.7.3b
+				}
+				else
+				{
+					$nextChar = utf8_substr($message, $offset + $tmpLength, 1);
+					if (!preg_match(self::REGEX, $nextChar)) {
+						// the next one is a text-character
+						// which means it is within another word -> refuse asap
+						// since 1.7.3
+						continue;
+					}
 				}
 				
 				if ($tmpLength > $foundLength) {
