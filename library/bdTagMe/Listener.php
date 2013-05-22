@@ -5,6 +5,8 @@ class bdTagMe_Listener {
 		// load_class_datawriter is still kept separated to do legacy support
 		// I don't want to break people's site when this upgrade this add-on
 		static $classes = array(
+			'bdAlerts_Model_Mail',
+
 			'XenForo_BbCode_Formatter_Base',
 		
 			'XenForo_ControllerAdmin_UserGroup',

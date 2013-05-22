@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.3b" version_id="47" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.4" version_id="48" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -38,7 +38,7 @@
       <body_text><![CDATA[{xen:phrase bdtagme_email_tagged_text, 
 	"receiver_username={$receiver.username}",
 	"username={$sender.username}",
-	"view_link={xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}",
+	"view_link={$viewLink}",
 	"prefs_link={xen:link 'canonical:account/contact-details'}",
 	"board_link={xen:link 'canonical:index'}",
 	"board_title={$xenOptions.boardTitle}"
@@ -48,8 +48,8 @@
 	'username=<a href="{xen:link canonical:members, $sender}" style="color: #176093; text-decoration: none">{$sender.username}</a>',
 	'board_title=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
 
-<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}" style="color: #141414; text-decoration: none">{xen:phrase bdtagme_email_tagged_html_2}<br />
-	<span style="color: #176093; font-size: 10px">{xen:link 'canonical:account/alerts/tagged', '', 'content={$contentType}', 'id={$contentId}'}</span></a></h2>
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{$viewLink}" style="color: #141414; text-decoration: none">{xen:phrase bdtagme_email_tagged_html_2}<br />
+	<span style="color: #176093; font-size: 10px">{$viewLink}</span></a></h2>
 
 <p style="font-size: 11px; color: #969696">{xen:phrase bdtagme_email_tagged_html_footer_1,
 	'board_title=<a href="{xen:link canonical:index}" style="color: #969696">{$xenOptions.boardTitle}</a>'}</p>

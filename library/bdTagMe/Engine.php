@@ -106,17 +106,22 @@ class bdTagMe_Engine {
 						$contentType, $contentId,
 						$alertAction
 					);
-					
+
 					if (bdTagMe_Option::get('alertEmail') AND !empty($taggedUser['bdtagme_email'])) {
-						$mail = XenForo_Mail::create('bdtagme_tagged', array(
-							'sender' => array('user_id' => $contentUserId, 'username' => $contentUserName),
-							'receiver' => $taggedUser,
-							'contentType' => $contentType,
-							'contentId' => $contentId,
-						), $taggedUser['language_id']);
-			
-						$mail->enableAllLanguagePreCache();
-						$mail->queue($taggedUser['email'], $taggedUser['username']);
+						$viewLink = $someRandomModel->getModelFromCache('XenForo_Model_Alert')->bdTagMe_getContentLink($contentType, $contentId);
+
+						if (!empty($viewLink)) {
+							$mail = XenForo_Mail::create('bdtagme_tagged', array(
+								'sender' => array('user_id' => $contentUserId, 'username' => $contentUserName),
+								'receiver' => $taggedUser,
+								'contentType' => $contentType,
+								'contentId' => $contentId,
+								'viewLink' => $viewLink,
+							), $taggedUser['language_id']);
+
+							$mail->enableAllLanguagePreCache();
+							$mail->queue($taggedUser['email'], $taggedUser['username']);
+						}
 					}
 				}
 			}
