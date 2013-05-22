@@ -8,6 +8,8 @@ class bdTagMe_Listener {
 			'bdAlerts_Model_Mail',
 
 			'XenForo_BbCode_Formatter_Base',
+			'XenForo_BbCode_Formatter_HtmlEmail',
+			'XenForo_BbCode_Formatter_Text',
 		
 			'XenForo_ControllerAdmin_UserGroup',
 			'XenForo_ControllerPublic_Account',
