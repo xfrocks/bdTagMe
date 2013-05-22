@@ -14,7 +14,7 @@ class bdTagMe_Listener {
 			'XenForo_ControllerAdmin_UserGroup',
 			'XenForo_ControllerPublic_Account',
 			'XenForo_ControllerPublic_Member', 
-		
+
 			'XenForo_DataWriter_DiscussionMessage_Post',
 			'XenForo_DataWriter_DiscussionMessage_ProfilePost',
 			'XenForo_DataWriter_ProfilePostComment',
@@ -24,6 +24,7 @@ class bdTagMe_Listener {
 			'XenForo_Model_Alert',
 			'XenForo_Model_Post',
 			'XenForo_Model_ProfilePost',
+			'XenForo_Model_ThreadWatch',
 			'XenForo_Model_User',
 		
 			'XenForo_Route_Prefix_Members',
@@ -33,6 +34,12 @@ class bdTagMe_Listener {
 		
 		if (in_array($class, $classes)) {
 			$extend[] = 'bdTagMe_' . $class;
+		}
+	}
+	
+	public static function load_class_bdAlerts_XenForo_DataWriter_Alert($class, array &$extend) {
+		if ($class === 'XenForo_DataWriter_Alert') {
+			$extend[] = 'bdTagMe_bdAlerts_XenForo_DataWriter_Alert';
 		}
 	}
 	

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.4b" version_id="49" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.4c" version_id="50" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -20,6 +20,7 @@
     <listener event_id="init_dependencies" execute_order="10" callback_class="bdTagMe_Listener" callback_method="init_dependencies" active="1" description=""/>
     <listener event_id="load_class_bb_code" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_controller" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class_bdAlerts_XenForo_DataWriter_Alert" active="1" description="Extending bdAlerts_XenForo_DataWriter_Alert"/>
     <listener event_id="load_class_datawriter" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_model" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>
     <listener event_id="load_class_route_prefix" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" description=""/>

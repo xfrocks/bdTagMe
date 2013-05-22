@@ -39,12 +39,14 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
 		$postModel = $this->_getPostModel();
 		
 		$quotedUserIds = $postModel->bdTagMe_getQuotedUserIds($post);
+		$threadWatchNotifiedUserIds = $this->getModelFromCache('XenForo_Model_ThreadWatch')->bdTagMe_getNotifiedUserIds($post['thread_id']);
+		$ignoredUserIds = array_unique(array_merge($quotedUserIds, $threadWatchNotifiedUserIds));
 		
 		$engine->notifyTaggedUsers2(
 			self::BDTAGME_UNIQUE_ID,
 			'post', $post['post_id'], $post['user_id'], $post['username'],
 			'tagged',
-			$quotedUserIds,
+			$ignoredUserIds,
 			$postModel
 		);
 	}
