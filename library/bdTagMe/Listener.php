@@ -94,6 +94,13 @@ class bdTagMe_Listener {
 				$ourTemplate = $template->create('bdtagme_PAGE_CONTAINER', $template->getParams());
 				$contents .= $ourTemplate->render();
 				break;
+
+			case 'quattro_js_setup':
+				$search = 'plugins: [';
+				$replace = "plugins: [\n\t\t\t\t \"xenforo_bdtagme\",";
+
+				$contents = str_replace($search, $replace, $contents);
+				break;
 		}
 	}
 	

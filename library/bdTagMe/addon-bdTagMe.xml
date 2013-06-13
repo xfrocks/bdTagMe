@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.5" version_id="51" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="1.7.5b" version_id="52" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -281,4 +281,5 @@ To stop receiving email, please edit your account preferences:
     <template title="bdtagme_tag" version_id="41" version_string="1.7"><![CDATA[<xen:comment>It's important to NOT break line in this template. You have been warned!</xen:comment>{xen:if '!{$removePrefix}', '@'}<xen:if is="{$entity.entity_link}">{xen:raw $entity.entity_link}<xen:else /><xen:if is="{$entity.entity_type} == 'user'"><a href="{xen:link members, {xen:array 'user_id={$entity.entity_id}', 'username={$entity.entity_text}'}}" class="username bdTagMe_TaggedUser">{$entity.entity_text}</a><xen:elseif is="{$entity.entity_type} == 'user_group'" /><a href="{xen:link 'members/tagged', $entity}" class="OverlayTrigger bdTagMe_TaggedUserGroup">{$entity.entity_text}</a><xen:else />{$entity.entity_text}</xen:if></xen:if>]]></template>
   </templates>
   <bb_code_media_sites/>
+  <template_modifications/>
 </addon>

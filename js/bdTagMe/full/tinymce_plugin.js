@@ -4,6 +4,7 @@ if (typeof tinymce != 'undefined') {
 		XenForo.bdTagMe_EditorWrapper.prototype = {
 			__construct: function(ed) {
 				this.ed = ed;
+
 				this.$element = $(ed.getElement()).parent();
 				
 				// PLEASE UPDATE THE SYMBOL AND REGEX IF YOU CHANGE IT HERE. THE 3 PLACES ARE:
@@ -182,7 +183,7 @@ if (typeof tinymce != 'undefined') {
 		
 		XenForo.bdTagMe_TinymceAutoComplete = function(ed) {
 			// copied from XenForo.AutoComplete.__construct
-			
+
 			// checks if the current root template is an enabled template
 			// since 1.3
 			if (XenForo.bdTagMe_enabledTemplates) {
@@ -229,14 +230,24 @@ if (typeof tinymce != 'undefined') {
 			this.loadVal = '';
 			this.$results = false;
 			this.resultsVisible = false;
-	
-			ed.onKeyDown.add($.context(this, 'edKeyDown'));
-			ed.onBeforeSetContent.add($.context(this, 'edBeforeSetContent'));
+
+			if (tinymce.majorVersion > 3) {
+				var self = this;
+				ed.on('keydown', function(e) {
+					self.edKeyDown(ed, e);
+				});
+				ed.on('BeforeSetContent', function(e) {
+					self.edBeforeSetContent(ed, e);
+				});
+			} else {
+				ed.onKeyDown.add($.context(this, 'edKeyDown'));
+				ed.onBeforeSetContent.add($.context(this, 'edBeforeSetContent'));
+			}
 		};
 		XenForo.bdTagMe_TinymceAutoComplete.prototype = $.extend(true, {}, XenForo.AutoComplete.prototype);
 		XenForo.bdTagMe_TinymceAutoComplete.prototype.edKeyDown = function(ed, e) {
 			var code = e.keyCode || e.charCode, prevent = true;
-	
+
 			switch(code)
 			{
 				case 40: // down
@@ -270,6 +281,32 @@ if (typeof tinymce != 'undefined') {
 		XenForo.bdTagMe_TinymceAutoComplete.prototype.showResults = function(results) {
 			this.$input.saveRange();
 			showResultsOrig.call(this, results);
+
+			// position the results panel to cursor's using bookmark
+			$iframe = $(this.ed.getContainer()).find('iframe');
+			$iframeBody = $(this.ed.getBody());
+
+			var bm = this.ed.selection.getBookmark(),
+			$bm = $iframeBody.find('#'+bm.id+'_start'),
+			$parentNode = $bm.parent().get(0),
+			$bmNode = $bm.get(0),
+			$previousNode = $bm.get(0).previousSibling;
+
+			var symbolOffset = $previousNode.nodeValue.lastIndexOf(this.$input.symbol),
+			$replacementNode = $previousNode.splitText(symbolOffset);
+			$parentNode.insertBefore($bmNode, $replacementNode);
+
+			// calculate the panel position using frame and bookmark offsets
+			var iframeOffset = $iframe.offset(),
+			bmOffset = $bm.offset(),
+			resultsOffset = {
+				top: iframeOffset.top + bmOffset.top + $bm.parent().height(),
+				left: iframeOffset.left + bmOffset.left
+			}
+			this.$results.offset(resultsOffset);
+
+			// remove the bookmark
+			$bm.remove();
 		};
 		
 		var hideResultsOrig = XenForo.bdTagMe_TinymceAutoComplete.prototype.hideResults;
@@ -279,20 +316,17 @@ if (typeof tinymce != 'undefined') {
 		};
 		
 		tinymce.create('tinymce.plugins.XenForobdTagMe', {
-			init: function(ed, url) {
+			XenForobdTagMe: function(ed) {
+				// version 4
 				new XenForo.bdTagMe_TinymceAutoComplete(ed);
 			},
 			
-			getInfo: function() {
-				return {
-					longname : '[bd] Tag Me',
-					author : 'xfrocks',
-					authorurl : 'http://xfrocks.com',
-					version : "1.2"
-				};
+			init: function(ed, url) {
+				// version 3
+				new XenForo.bdTagMe_TinymceAutoComplete(ed);
 			}
 		});
-			
+
 		// Register plugin
 		tinymce.PluginManager.add('xenforo_bdtagme', tinymce.plugins.XenForobdTagMe);
 	}(jQuery, tinymce));
