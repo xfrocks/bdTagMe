@@ -6,7 +6,7 @@ class bdTagMe_DevHelper_Config extends DevHelper_Config_Base {
 			'bdtagme_email' => array('name' => 'bdtagme_email', 'type' => 'uint', 'default' => 0, 'required' => true)
 		)
 	);
-	protected $_exportPath = '/Users/sondh/Dropbox/XenForo/bdTagMe';
+	protected $_exportPath = '/Users/sondh/XenForo/bdTagMe';
 	protected $_exportIncludes = array();
 	
 	/**

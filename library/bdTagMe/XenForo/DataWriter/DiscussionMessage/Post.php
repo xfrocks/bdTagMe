@@ -1,53 +1,30 @@
 <?php
 
-class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_Post {
-	
-	const BDTAGME_UNIQUE_ID = 'post-new'; 
-	
-	public function set($field, $value, $tableName = '', array $options = null) {
-		if ($field == 'message') {
-			$engine = bdTagMe_Engine::getInstance();
-			$options = array(
-				'max'					=> bdTagMe_Option::get('max'),
-				'groupTag'				=> bdTagMe_Option::get('groupTag'),
-				'mode'					=> bdTagMe_Option::get('mode'),
-				'modeCustomTag'			=> bdTagMe_Option::get('modeCustomTag'),
-				'removePrefix'  		=> bdTagMe_Option::get('removePrefix'),
-				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
-			);
-			$errorInfo = false;
-			
-			if (!$engine->searchTextForTagged(self::BDTAGME_UNIQUE_ID, $value, $options, $errorInfo)) {
-				$engine->issueDwError($this, 'message', $errorInfo);
+class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_Post
+{
+
+	protected function _postSaveAfterTransaction()
+	{
+		$response = parent::_postSaveAfterTransaction();
+
+		if ($this->get('message_state') == 'visible')
+		{
+			if ($this->isInsert() || $this->getExisting('message_state') == 'moderated')
+			{
 			}
 		}
-		
-		parent::set($field,$value,$tableName,$options);
-	}
-	
-	protected function _postSaveAfterTransaction() {
-		parent::_postSaveAfterTransaction();
-		
-		// TODO: think about additional check for message_state or something like that?
-		// it's probably useful to just send out notification in those cases
-		// the post may get approved soon enough, who knows?
-		
+
 		$engine = bdTagMe_Engine::getInstance();
 		$post = $this->getMergedData();
-		
-		/* @var $postModel XenForo_Model_Post */
-		$postModel = $this->_getPostModel();
-		
-		$quotedUserIds = $postModel->bdTagMe_getQuotedUserIds($post);
-		$threadWatchNotifiedUserIds = $this->getModelFromCache('XenForo_Model_ThreadWatch')->bdTagMe_getNotifiedUserIds($post['thread_id']);
-		$ignoredUserIds = array_unique(array_merge($quotedUserIds, $threadWatchNotifiedUserIds));
-		
-		$engine->notifyTaggedUsers2(
-			self::BDTAGME_UNIQUE_ID,
-			'post', $post['post_id'], $post['user_id'], $post['username'],
-			'tagged',
-			$ignoredUserIds,
-			$postModel
-		);
+
+		/* @var $forumWatchModel XenForo_Model_ForumWatch */
+		$forumWatchModel = $this->getModelFromCache('XenForo_Model_ForumWatch');
+		$notifiedUserIds = $forumWatchModel->bdTagMe_getNotifiedUserIds($post);
+
+		$options = array(bdTagMe_Engine::OPTION_MAX_TAGGED_USERS => $this->getOption(self::OPTION_MAX_TAGGED_USERS));
+		$engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag', $this->_taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
+
+		return $response;
 	}
+
 }

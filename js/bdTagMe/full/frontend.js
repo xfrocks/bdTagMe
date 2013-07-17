@@ -7,10 +7,10 @@
 		var existing = $textarea.data('bdTagMe_ProfilePostAutoComplete');
 		if (existing) return;
 		$textarea.data('bdTagMe_ProfilePostAutoComplete', this);
-		
+
 		this.$input = $textarea;
 		this.textarea = $textarea[0];
-		this.url = 'index.php?members/tag-suggestions&_xfResponseType=json';
+		this.url = 'index.php?members/bdtagme-find&_xfResponseType=json';
 
 		var options = {
 			multiple: false,
@@ -40,26 +40,32 @@
 			this.suggestionMaxLength = XenForo.bdTagMe_suggestionMaxLength;
 		}
 
-		this.selectedResult = 0;
 		this.loadVal = '';
-		this.$results = false;
-		this.resultsVisible = false;
+		this.results = new XenForo.AutoCompleteResults({
+			onInsert: $.context(this, 'addValue')
+		});
 		
+		// unbind previously binded listener
 		$textarea.unbind('keydown');
-		$textarea.keydown($.context(this, 'keystroke2'));
-		$textarea.blur($.context(this, 'blur'));
+		
+		$textarea.attr('autocomplete', 'off')
+			.keydown($.context(this, 'keystroke2'))
+			.keypress($.context(this, 'operaKeyPress'))
+			.blur($.context(this, 'blur'));
+
+		$textarea.closest('form').submit($.context(this, 'hideResults'));
 	};
 	XenForo.bdTagMe_ProfilePostAutoComplete.prototype = $.extend(true, {}, XenForo.AutoComplete.prototype);
 	XenForo.bdTagMe_ProfilePostAutoComplete.prototype.keystroke2 = function(e) {
 		var code = e.keyCode || e.charCode;
-		var resultsVisible = this.resultsVisible;
+		var resultsVisible = this.results.isVisible();
 
 		switch(code)
 		{
 			case 40: // down
 			case 38: // up
 			case 27: // esc
-				if (!this.resultsVisible) {
+				if (!resultsVisible) {
 					// if our results is not visible
 					// stop calling the keystroke method
 					// or user won't be able to navigate around

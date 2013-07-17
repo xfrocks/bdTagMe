@@ -1,46 +1,33 @@
 <?php
 
-class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost {
+class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost
+{
+	protected $_bdTagMe_taggedUsers = array();
 
-	const BDTAGME_UNIQUE_ID = 'profile-post-new';
+	protected function _messagePreSave()
+	{
+		/* @var $taggingModel XenForo_Model_UserTagging */
+		$taggingModel = $this->getModelFromCache('XenForo_Model_UserTagging');
 
-	public function set($field, $value, $tableName = '', array $options = null) {
-		if ($field == 'message') {
-			$engine = bdTagMe_Engine::getInstance();
-			$options = array(
-				'max'					=> bdTagMe_Option::get('max'),
-				'groupTag'				=> bdTagMe_Option::get('groupTag'),
-				'mode'					=> 'facebookAlike',
-				'maxUsersPerPortion' 	=> bdTagMe_Option::get('maxUsersPerPortion'),
-			);
-			$errorInfo = false;
-			
-			if (!$engine->searchTextForTagged(self::BDTAGME_UNIQUE_ID, $value, $options, $errorInfo)) {
-				$engine->issueDwError($this, 'message', $errorInfo);
-			}
-		}
-		
-		return parent::set($field,$value,$tableName,$options);
+		$this->_bdTagMe_taggedUsers = $taggingModel->getTaggedUsersInMessage($this->get('message'), $newMessage, '');
+		$this->set('message', $newMessage);
+
+		return parent::_messagePreSave();
 	}
 
-	protected function _postSaveAfterTransaction() {
-		parent::_postSaveAfterTransaction();
+	protected function _postSaveAfterTransaction()
+	{
+		$response = parent::_postSaveAfterTransaction();
 
 		$engine = bdTagMe_Engine::getInstance();
-		$data = $this->getMergedData();
-		$isStatus = $this->isStatus();
-		
-		/* @var $profilePostModel XenForo_Model_ProfilePost */
-		$profilePostModel = $this->_getProfilePostModel();
-		
-		$engine->notifyTaggedUsers2(
-			self::BDTAGME_UNIQUE_ID,
-			'profile_post', $data['profile_post_id'], $data['user_id'], $data['username'],
-			'tagged',
-			array(
-				$this->get('profile_user_id'), // obviously the target profile shouldn't be notified again
-			),
-			$profilePostModel
-		);
+		$profilePost = $this->getMergedData();
+
+		$noAlertUserIds = array($this->get('profile_user_id'));
+		$noEmailUserIds = array();
+
+		$engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'], $profilePost['user_id'], $profilePost['username'], 'tagged', $this->_bdTagMe_taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel());
+
+		return $response;
 	}
+
 }
