@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="2.0" version_id="2053" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="2.0.1" version_id="2054" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -203,9 +203,19 @@ To stop receiving email, please edit your account preferences:
 </xen:if>]]></template>
   </templates>
   <public_template_modifications>
-    <modification template="editor" modification_key="bdtagme_editor" description="" execution_order="10" enabled="1" action="str_replace">
+    <modification template="editor" modification_key="bdtagme_editor" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[{xen:if $editorOptions.json, 'data-options="{xen:escape {xen:helper json, $editorOptions.json}}"'}]]></find>
       <replace><![CDATA[$0 data-ac-url="{xen:link members/bdtagme-find}"]]></replace>
+    </modification>
+    <modification template="tiny_quattro_js_setup" modification_key="bdtagme_tiny_quattro_js_setup_plugins" description="Add tagging support for TinyMCE Quattro add-on (enable our TinyMCE plugin)" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[plugins: []]></find>
+      <replace><![CDATA[$0
+				 "bdtagme",]]></replace>
+    </modification>
+    <modification template="tiny_quattro_js_setup" modification_key="bdtagme_tiny_quattro_js_setup_require_js" description="Add tagging support for TinyMCE Quattro add-on (require additional JavaScript files)" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<xen:require js="js/sedo/tinyquattro/tinymce/tinymce.min.js" />]]></find>
+      <replace><![CDATA[$0
+<xen:require js="js/bdTagMe/tinymce_plugin.js" />]]></replace>
     </modification>
   </public_template_modifications>
   <bb_code_media_sites/>

@@ -28,14 +28,13 @@
 		this.jsonContainer = options.jsonContainer;
 		this.autoSubmit = options.autoSubmit;
 		
-		// PLEASE UPDATE THE SYMBOL AND REGEX IF YOU CHANGE IT HERE. THE 3 PLACES ARE:
+		// PLEASE UPDATE THE SYMBOL AND REGEX IF YOU CHANGE IT HERE. THE 2 PLACES ARE:
 		// xenforo/js/bdTagMe/full/frontend.js
 		// xenforo/js/bdTagMe/full/tinymce_plugin.js
-		// xenforo/library/bdTagMe/Engine.php
 		this.symbol = '@';
 		this.regex = new RegExp(/[\s\(\)\.,!\?:;@\\\\{}'"]/);
 		
-		this.suggestionMaxLength = 0;
+		this.suggestionMaxLength = 8; // XenForo 1.2 default
 		if (XenForo.bdTagMe_suggestionMaxLength) {
 			this.suggestionMaxLength = XenForo.bdTagMe_suggestionMaxLength;
 		}
@@ -118,7 +117,7 @@
 		if (lastIndexOfSymbol > -1) {
 			if (this.suggestionMaxLength > 0) {
 				// there is maximum length, checks for it
-				if (text.length - lastIndexOfSymbol < this.suggestionMaxLength) {
+				if ((text.length - lastIndexOfSymbol - 1) <= this.suggestionMaxLength) {
 					valueFound = true;
 				}
 			} else {
