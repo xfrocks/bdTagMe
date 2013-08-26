@@ -323,7 +323,7 @@ if (typeof tinymce != 'undefined') {
 			
 			init: function(ed, url) {
 				// version 3
-				new XenForo.bdTagMe_TinymceAutoComplete(ed);
+				// new XenForo.bdTagMe_TinymceAutoComplete(ed);
 			}
 		});
 
