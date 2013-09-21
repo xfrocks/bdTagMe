@@ -39,6 +39,11 @@ class bdTagMe_Listener
 		}
 	}
 
+	public static function init_dependencies(XenForo_Dependencies_Abstract $dependencies, array $data)
+	{
+		bdTagMe_Helper_Template::helperSnippetSetup();
+	}
+
 	public static function template_create($templateName, array &$params, XenForo_Template_Abstract $template)
 	{
 		switch ($templateName)

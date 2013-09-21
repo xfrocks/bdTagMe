@@ -9,7 +9,7 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
 		/* @var $taggingModel XenForo_Model_UserTagging */
 		$taggingModel = $this->getModelFromCache('XenForo_Model_UserTagging');
 
-		$this->_bdTagMe_taggedUsers = $taggingModel->getTaggedUsersInMessage($this->get('message'), $newMessage, '');
+		$this->_bdTagMe_taggedUsers = $taggingModel->getTaggedUsersInMessage($this->get('message'), $newMessage, 'facebookAlike');
 		$this->set('message', $newMessage);
 
 		return parent::_messagePreSave();

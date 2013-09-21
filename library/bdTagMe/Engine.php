@@ -52,7 +52,7 @@ class bdTagMe_Engine
 				// there are limit of maximum tagged users
 				$neededUserIds = array_slice($neededUserIds, 0, $options[self::OPTION_MAX_TAGGED_USERS], true);
 			}
-			
+
 			$users = $userModel->getUsersByIds($neededUserIds, array('join' => XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PROFILE,
 				// 'nodeIdPermissions' => $thread['node_id']
 			));
@@ -185,6 +185,101 @@ class bdTagMe_Engine
 		{
 			XenForo_Application::setSimpleCacheData(self::SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS, $taggableUserGroups);
 		}
+	}
+
+	public function renderFacebookAlike($message)
+	{
+		$rendered = $message;
+		$offset = 0;
+		$entities = array();
+
+		do
+		{
+			// LOL, I'm so good at this kind of stuff!
+			if ($matched = preg_match('/@\[(([a-z_]+,)?(\d+)):(([^\\\\\\]]|\\\\\\\\|\\\\])+)\]/', $rendered, $matches, PREG_OFFSET_CAPTURE, $offset))
+			{
+				$offset = $matches[0][1];
+				$fullMatched = $matches[0][0];
+				$entityId = $matches[1][0];
+				$entityText = self::unEscapeFacebookAlike($matches[4][0]);
+
+				if (!empty($entityText))
+				{
+					if (is_numeric($entityId))
+					{
+						$entities[$offset] = array(
+							'entity_type' => 'user',
+							'entity_id' => $entityId,
+							'entity_text' => $entityText,
+							'fullMatched' => $fullMatched,
+						);
+					}
+					else
+					{
+						$parts = explode(',', $entityId);
+						if (count($parts) == 2)
+						{
+							switch ($parts[0])
+							{
+								case 'usergroup':
+									$entities[$offset] = array(
+										'entity_type' => $parts[0],
+										'entity_id' => $entityId,
+										'entity_text' => $entityText,
+										'fullMatched' => $fullMatched,
+									);
+									break;
+								default:
+								// do not process unknown entity type
+							}
+						}
+					}
+				}
+
+				// prevent us from matching the same thing all over again
+				$offset++;
+			}
+		}
+		while ($matched);
+
+		if (!empty($entities))
+		{
+			// starts render the portions
+			$entities = array_reverse($entities, true);
+
+			$prefix = XenForo_Application::getOptions()->userTagKeepAt ? '@' : '';
+
+			foreach ($entities as $offset => $entity)
+			{
+				$replacement = $prefix . htmlentities($entity['entity_text']);
+
+				$rendered = substr($rendered, 0, $offset) . $replacement . substr($rendered, $offset + strlen($entity['fullMatched']));
+			}
+		}
+
+		return $rendered;
+	}
+
+	public static function escapeFacebookAlike($string)
+	{
+		return str_replace(array(
+			'\\',
+			']'
+		), array(
+			'\\\\',
+			'\\]'
+		), $string);
+	}
+
+	public static function unEscapeFacebookAlike($string)
+	{
+		return str_replace(array(
+			'\\]',
+			'\\\\'
+		), array(
+			']',
+			'\\'
+		), $string);
 	}
 
 	/**

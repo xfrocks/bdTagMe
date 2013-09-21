@@ -46,17 +46,45 @@ class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserT
 
 	protected function _replaceTagUserMatch(array $user, $replaceStyle)
 	{
+		$prefix = XenForo_Application::getOptions()->userTagKeepAt ? '@' : '';
+
 		if (!empty($user['user_group_id']))
 		{
-			$prefix = XenForo_Application::getOptions()->userTagKeepAt ? '@' : '';
-
+			// user group tagging
 			if ($replaceStyle == 'bb')
 			{
-				return $prefix . '[USERGROUP=' . $user['user_group_id'] . ']' . $user['username'] . '[/USERGROUP]';
+				return call_user_func_array('sprintf', array(
+					'%s[USERGROUP=%s]%s[/USERGROUP]',
+					$prefix,
+					$user['user_group_id'],
+					$user['username'],
+				));
+			}
+			elseif ($replaceStyle == 'facebookAlike')
+			{
+				return call_user_func_array('sprintf', array(
+					'%s[usergroup,%s:%s]',
+					$prefix,
+					$user['user_group_id'],
+					bdTagMe_Engine::escapeFacebookAlike($user['username']),
+				));
 			}
 			else
 			{
 				return $prefix . $user['username'];
+			}
+		}
+		else
+		{
+			// user tagging
+			if ($replaceStyle == 'facebookAlike')
+			{
+				return call_user_func_array('sprintf', array(
+					'%s[%s:%s]',
+					$prefix,
+					$user['user_id'],
+					bdTagMe_Engine::escapeFacebookAlike($user['username']),
+				));
 			}
 		}
 
