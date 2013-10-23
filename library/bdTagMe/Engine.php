@@ -127,7 +127,9 @@ class bdTagMe_Engine
 	{
 		$userGroups = XenForo_Application::getSimpleCacheData(self::SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS);
 		if (empty($userGroups))
+		{
 			$userGroups = array();
+		}
 
 		return $userGroups;
 	}
@@ -145,6 +147,7 @@ class bdTagMe_Engine
 				'title' => $userGroup['title'],
 				'userIds' => $dw->getModelFromCache('XenForo_Model_User')->bdTagMe_getUserIdsByUserGroupId($userGroup['user_group_id']),
 			);
+			ksort($taggableUserGroups);
 			$isChanged = true;
 		}
 		else

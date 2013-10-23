@@ -23,6 +23,11 @@ class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserT
 				$userGroupTitlesToLower[$taggableUserGroup['user_group_id']] = utf8_strtolower($taggableUserGroup['title']);
 			}
 
+			uasort($userGroupTitlesToLower, array(
+				__CLASS__,
+				'sortByLengthLongerFirst'
+			));
+
 			foreach ($userGroupTitlesToLower as $userGroupId => $userGroupTitleToLower)
 			{
 				foreach ($matchesToLower as $matchKey => $matchToLower)
@@ -89,6 +94,11 @@ class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserT
 		}
 
 		return parent::_replaceTagUserMatch($user, $replaceStyle);
+	}
+
+	public static function sortByLengthLongerFirst($a, $b)
+	{
+		return strlen($a) < strlen($b) ? 1 : -1;
 	}
 
 }
