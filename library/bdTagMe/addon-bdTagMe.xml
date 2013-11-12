@@ -76,6 +76,12 @@ $0]]></replace>
       <sub_options></sub_options>
       <relation group_id="bdtagme" display_order="20"/>
     </option>
+    <option option_id="bdtagme_skipGlobalJs" edit_format="onoff" data_type="unsigned_integer" can_backup="1">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="bdtagme" display_order="20000"/>
+    </option>
     <option option_id="bdtagme_userGroupGravatar" edit_format="textbox" data_type="string" can_backup="1">
       <default_value>bdtagme.usergroup@xfrocks.com</default_value>
       <edit_format_params></edit_format_params>
@@ -126,6 +132,8 @@ To stop receiving email, please edit your account preferences:
     <phrase title="bdtagme_x_tagged_you_in_a_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>status</a>.]]></phrase>
     <phrase title="option_bdtagme_alertEmail" version_id="40" version_string="1.6.6"><![CDATA[Send Alert Emails]]></phrase>
     <phrase title="option_bdtagme_alertEmail_explain" version_id="40" version_string="1.6.6"><![CDATA[Enable this option to send alert emails in addition to builtin notification system. Users still need to enable the option in /account/preferences to start receiving emails.]]></phrase>
+    <phrase title="option_bdtagme_skipGlobalJs" version_id="2054" version_string="2.0.1"><![CDATA[Skip Global JavaScript]]></phrase>
+    <phrase title="option_bdtagme_skipGlobalJs_explain" version_id="2054" version_string="2.0.1"><![CDATA[Enable this option to skip loading this add-on's JavaScript file in all pages. Please note that doing so will prevent tagging suggestion from showing up in non-WYSIWYG textareas.]]></phrase>
     <phrase title="option_bdtagme_userGroupGravatar" version_id="25" version_string="1.5.9"><![CDATA[User Group Gravatar]]></phrase>
     <phrase title="option_bdtagme_userGroupGravatar_explain" version_id="25" version_string="1.5.9"><![CDATA[User groups will show up in suggestion list with a small image. You can use any image you want by uploading to <a href="http://gravatar.com/" tabindex="-1">Gravatar</a> and enter the email address here.]]></phrase>
     <phrase title="option_group_bdtagme" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me]]></phrase>

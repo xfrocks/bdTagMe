@@ -56,7 +56,10 @@ class bdTagMe_Listener
 				break;
 
 			case 'PAGE_CONTAINER':
-				$template->preloadTemplate('bdtagme_' . $templateName);
+				if (!bdTagMe_Option::get('skipGlobalJs'))
+				{
+					$template->preloadTemplate('bdtagme_' . $templateName);
+				}
 				break;
 		}
 	}
@@ -72,8 +75,11 @@ class bdTagMe_Listener
 				break;
 
 			case 'body':
-				$ourTemplate = $template->create('bdtagme_PAGE_CONTAINER', $template->getParams());
-				$contents .= $ourTemplate->render();
+				if (!bdTagMe_Option::get('skipGlobalJs'))
+				{
+					$ourTemplate = $template->create('bdtagme_PAGE_CONTAINER', $template->getParams());
+					$contents .= $ourTemplate->render();
+				}
 				break;
 		}
 	}
