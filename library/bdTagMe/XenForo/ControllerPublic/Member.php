@@ -59,7 +59,7 @@ class bdTagMe_XenForo_ControllerPublic_Member extends XFCP_bdTagMe_XenForo_Contr
 			if (!empty($q) AND bdTagMe_Option::get('groupTag'))
 			{
 				$userGroups = bdTagMe_Engine::getInstance()->getTaggableUserGroups();
-				
+
 				$userGroupTitlesToLower = array();
 				foreach ($userGroups as $userGroup)
 				{

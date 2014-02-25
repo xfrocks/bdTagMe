@@ -17,7 +17,7 @@ class bdTagMe_XenForo_BbCode_Formatter_Base extends XFCP_bdTagMe_XenForo_BbCode_
 
 		return $tags;
 	}
-	
+
 	public function bdTagMe_renderTagUserGroup(array $tag, array $rendererStates)
 	{
 		$content = $this->renderSubTree($tag['children'], $rendererStates);

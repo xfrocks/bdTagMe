@@ -7,8 +7,6 @@ class bdTagMe_Listener
 		// load_class_datawriter is still kept separated to do legacy support
 		// I don't want to break people's site when this upgrade this add-on
 		static $classes = array(
-			'bdAlerts_Model_Mail',
-
 			'XenForo_BbCode_Formatter_Base',
 			'XenForo_BbCode_Formatter_HtmlEmail',
 			'XenForo_BbCode_Formatter_Text',
@@ -25,8 +23,6 @@ class bdTagMe_Listener
 
 			'XenForo_Model_Alert',
 			'XenForo_Model_ForumWatch',
-			'XenForo_Model_Post',
-			'XenForo_Model_ProfilePost',
 			'XenForo_Model_User',
 			'XenForo_Model_UserTagging',
 
@@ -48,18 +44,8 @@ class bdTagMe_Listener
 	{
 		switch ($templateName)
 		{
-			case 'account_alert_preferences':
-				$template->preloadTemplate('bdtagme_account_alerts_messages_on_profile_pages');
-				break;
 			case 'account_contact_details':
 				$template->preloadTemplate('bdtagme_account_contact_details_messaging');
-				break;
-
-			case 'PAGE_CONTAINER':
-				if (!bdTagMe_Option::get('skipGlobalJs'))
-				{
-					$template->preloadTemplate('bdtagme_' . $templateName);
-				}
 				break;
 		}
 	}
@@ -68,18 +54,9 @@ class bdTagMe_Listener
 	{
 		switch ($hookName)
 		{
-			case 'account_alerts_messages_on_profile_pages':
 			case 'account_contact_details_messaging':
 				$ourTemplate = $template->create('bdtagme_' . $hookName, $template->getParams());
 				$contents .= $ourTemplate->render();
-				break;
-
-			case 'body':
-				if (!bdTagMe_Option::get('skipGlobalJs'))
-				{
-					$ourTemplate = $template->create('bdtagme_PAGE_CONTAINER', $template->getParams());
-					$contents .= $ourTemplate->render();
-				}
 				break;
 		}
 	}

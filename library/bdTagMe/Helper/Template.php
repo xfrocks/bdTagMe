@@ -6,12 +6,6 @@ class bdTagMe_Helper_Template
 
 	public static function helperSnippetSetup()
 	{
-		if (XenForo_Application::$versionId >= 1030000)
-		{
-			// XenForo 1.3 parse tags similar to us
-			return;
-		}
-		
 		self::$_defaultBodyText = XenForo_Template_Helper_Core::$helperCallbacks['bodytext'];
 		if (self::$_defaultBodyText[0] === 'self')
 		{
@@ -27,14 +21,31 @@ class bdTagMe_Helper_Template
 	public static function helperBodyText()
 	{
 		$args = func_get_args();
+		$string = call_user_func_array(self::$_defaultBodyText, $args);
 
-		$string = array_shift($args);
+		$string = self::linkTaggedUserGroup($string);
 
-		$string = bdTagMe_Engine::getInstance()->renderFacebookAlike($string);
+		return $string;
+	}
 
-		array_unshift($args, $string);
+	public static function linkTaggedUserGroup($string)
+	{
+		$string = preg_replace_callback('#(?<=^|\s|[\](,]|--|@)@\[ug_(\d+):(\'|"|&quot;|)(.*)\\2\]#iU', array(
+			'self',
+			'_linkTaggedUserGroupCallback'
+		), $string);
 
-		return call_user_func_array(self::$_defaultBodyText, $args);
+		return $string;
+	}
+
+	protected static function _linkTaggedUserGroupCallback(array $matches)
+	{
+		$userGroupId = intval($matches[1]);
+		$userGroupTitle = htmlspecialchars($matches[3], null, 'utf-8', false);
+
+		$link = XenForo_Link::buildPublicLink('full:members', array(), array('ug' => $userGroupId));
+
+		return '<a href="' . htmlspecialchars($link) . '" class="username ug" data-usergroup="' . $userGroupId . ', ' . $userGroupTitle . '">' . $userGroupTitle . '</a>';
 	}
 
 }

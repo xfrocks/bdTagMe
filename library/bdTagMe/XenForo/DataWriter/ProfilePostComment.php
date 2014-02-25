@@ -2,48 +2,28 @@
 
 class bdTagMe_XenForo_DataWriter_ProfilePostComment extends XFCP_bdTagMe_XenForo_DataWriter_ProfilePostComment
 {
-
-	protected $_bdTagMe_taggedUsers = array();
-
-	protected function _preSave()
+	protected function _postSave()
 	{
-		/* @var $taggingModel XenForo_Model_UserTagging */
-		$taggingModel = $this->getModelFromCache('XenForo_Model_UserTagging');
+		// reset _taggedUsers so the default routine will not resend alerts
+		// of course, we kept our copy in local variable $taggedUsers
+		$taggedUsers = $this->_taggedUsers;
+		$this->_taggedUsers = array();
 
-		$this->_bdTagMe_taggedUsers = $taggingModel->getTaggedUsersInMessage($this->get('message'), $newMessage, 'facebookAlike');
-		$this->set('message', $newMessage);
+		$response = parent::_postSave();
 
-		return parent::_preSave();
-	}
-
-	protected function _postSaveAfterTransaction()
-	{
-		$response = parent::_postSaveAfterTransaction();
-
-		$engine = bdTagMe_Engine::getInstance();
-		$comment = $this->getMergedData();
-
-		/* @var $profilePostModel XenForo_Model_ProfilePost */
-		$profilePostModel = $this->_getProfilePostModel();
-
-		$otherCommenterIds = $profilePostModel->getProfilePostCommentUserIds($comment['profile_post_id']);
-		$noAlertUserIds = $otherCommenterIds;
-
-		$profileUser = $this->getExtraData(self::DATA_PROFILE_USER);
-		if (!empty($profileUser))
+		if ($this->isInsert())
 		{
-			$noAlertUserIds[] = $profileUser['user_id'];
+			$engine = bdTagMe_Engine::getInstance();
+			$profilePost = $this->getExtraData(self::DATA_PROFILE_POST);
+			if (!empty($profilePost))
+			{
+				$noAlertUserIds = $this->getModelFromCache('XenForo_Model_Alert')->bdTagMe_getAlertedUserIds('profile_post', $profilePost['profile_post_id']);
+				$noEmailUserIds = array();
+
+				$options = array(bdTagMe_Engine::OPTION_MAX_TAGGED_USERS => $this->getOption(self::OPTION_MAX_TAGGED_USERS));
+				$engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'], $profilePost['user_id'], $profilePost['username'], 'tag_comment', $taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel(), $options);
+			}
 		}
-
-		$profilePost = $this->getExtraData(self::DATA_PROFILE_POST);
-		if (!empty($profilePost))
-		{
-			$noAlertUserIds[] = $profilePost['user_id'];
-		}
-
-		$noEmailUserIds = array();
-
-		$engine->notifyTaggedUsers3('profile_post', $comment['profile_post_id'], $comment['user_id'], $comment['username'], 'comment_tagged', $this->_bdTagMe_taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel());
 
 		return $response;
 	}

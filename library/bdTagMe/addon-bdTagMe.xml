@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="2.1.0b" version_id="2056" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.0.0" version_id="3057" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -77,12 +77,6 @@ $0]]></replace>
       <sub_options></sub_options>
       <relation group_id="bdtagme" display_order="20"/>
     </option>
-    <option option_id="bdtagme_skipGlobalJs" edit_format="onoff" data_type="unsigned_integer" can_backup="1">
-      <default_value>0</default_value>
-      <edit_format_params></edit_format_params>
-      <sub_options></sub_options>
-      <relation group_id="bdtagme" display_order="20000"/>
-    </option>
     <option option_id="bdtagme_userGroupGravatar" edit_format="textbox" data_type="string" can_backup="1">
       <default_value>bdtagme.usergroup@xfrocks.com</default_value>
       <edit_format_params></edit_format_params>
@@ -133,8 +127,6 @@ To stop receiving email, please edit your account preferences:
     <phrase title="bdtagme_x_tagged_you_in_a_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>status</a>.]]></phrase>
     <phrase title="option_bdtagme_alertEmail" version_id="40" version_string="1.6.6"><![CDATA[Send Alert Emails]]></phrase>
     <phrase title="option_bdtagme_alertEmail_explain" version_id="2056" version_string="2.1.0b"><![CDATA[Enable this option to send alert emails in addition to builtin notification system. Users still need to enable the option in /account/contact-details to start receiving emails.]]></phrase>
-    <phrase title="option_bdtagme_skipGlobalJs" version_id="2054" version_string="2.0.1"><![CDATA[Skip Global JavaScript]]></phrase>
-    <phrase title="option_bdtagme_skipGlobalJs_explain" version_id="2054" version_string="2.0.1"><![CDATA[Enable this option to skip loading this add-on's JavaScript file in all pages. Please note that doing so will prevent tagging suggestion from showing up in non-WYSIWYG textareas.]]></phrase>
     <phrase title="option_bdtagme_userGroupGravatar" version_id="25" version_string="1.5.9"><![CDATA[User Group Gravatar]]></phrase>
     <phrase title="option_bdtagme_userGroupGravatar_explain" version_id="25" version_string="1.5.9"><![CDATA[User groups will show up in suggestion list with a small image. You can use any image you want by uploading to <a href="http://gravatar.com/" tabindex="-1">Gravatar</a> and enter the email address here.]]></phrase>
     <phrase title="option_group_bdtagme" version_id="8" version_string="1.2.3"><![CDATA[[bd] Tag Me]]></phrase>
@@ -178,14 +170,6 @@ To stop receiving email, please edit your account preferences:
 	}
 </xen:if>]]></template>
     <template title="bdtagme.css" version_id="27" version_string="1.6-dev"><![CDATA[.xenOverlay .bdTagMe_TaggedUserGroupMemberList { max-height: 300px; overflow-y: scroll; }]]></template>
-    <template title="bdtagme_account_alerts_messages_on_profile_pages" version_id="9" version_string="1.4"><![CDATA[<li><input type="hidden" name="alertSet[profile_post_tagged]" value="1" />
-	<label><input type="checkbox" value="1" name="alert[profile_post_tagged]" {xen:checked "!{$alertOptOuts.profile_post_tagged}"} /> {xen:phrase bdtagme_tags_you}</label>
-	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_profile_post}</p>
-</li>
-<li><input type="hidden" name="alertSet[profile_post_comment_tagged]" value="1" />
-	<label><input type="checkbox" value="1" name="alert[profile_post_comment_tagged]" {xen:checked "!{$alertOptOuts.profile_post_comment_tagged}"} /> {xen:phrase bdtagme_tags_you_in_a_comment}</label>
-	<p class="hint">{xen:phrase bdtagme_someone_tags_you_in_a_comment_on_a_profile_post}</p>
-</li>]]></template>
     <template title="bdtagme_account_contact_details_messaging" version_id="52" version_string="1.7.5b"><![CDATA[<xen:if is="{$xenOptions.bdtagme_alertEmail}">
 	<li><label for="ctrl_bdtagme_email"><input type="checkbox" name="bdtagme_email" value="1" id="ctrl_bdtagme_email" {xen:checked '{$visitor.bdtagme_email}'} />
 		{xen:phrase bdtagme_receive_email_when_tagged}</label>
@@ -207,25 +191,25 @@ To stop receiving email, please edit your account preferences:
 		</xen:foreach>
 	</ol>
 </div>]]></template>
-    <template title="bdtagme_PAGE_CONTAINER" version_id="52" version_string="1.7.5b"><![CDATA[<xen:if is="{$visitor.user_id} > 0">
-	<xen:require js="js/bdTagMe/frontend.js" />
-</xen:if>]]></template>
   </templates>
   <public_template_modifications>
     <modification template="editor" modification_key="bdtagme_editor" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[{xen:if $editorOptions.json, 'data-options="{xen:escape {xen:helper json, $editorOptions.json}}"'}]]></find>
       <replace><![CDATA[$0 data-ac-url="{xen:link members/bdtagme-find}"]]></replace>
     </modification>
-    <modification template="tiny_quattro_js_setup" modification_key="bdtagme_tiny_quattro_js_setup_plugins" description="Add tagging support for TinyMCE Quattro add-on (enable our TinyMCE plugin)" execution_order="10" enabled="1" action="str_replace">
-      <find><![CDATA[plugins: []]></find>
-      <replace><![CDATA[$0
-				 "bdtagme",]]></replace>
+    <modification template="member_view" modification_key="bdtagme_member_view" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#class="[^"]*UserTagger[^"]*"#]]></find>
+      <replace><![CDATA[$0 data-acurl="{xen:link members/bdtagme-find}"]]></replace>
     </modification>
-    <modification template="tiny_quattro_js_setup" modification_key="bdtagme_tiny_quattro_js_setup_require_js" description="Add tagging support for TinyMCE Quattro add-on (require additional JavaScript files)" execution_order="10" enabled="1" action="str_replace">
-      <find><![CDATA[<xen:require js="js/sedo/tinyquattro/tinymce/tinymce.min.js" />]]></find>
-      <replace><![CDATA[$0
-<xen:require js="js/bdTagMe/tinymce_plugin.js" />]]></replace>
+    <modification template="navigation_visitor_tab" modification_key="bdtagme_navigation_visitor_tab" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#class="[^"]*UserTagger[^"]*"#]]></find>
+      <replace><![CDATA[$0 data-acurl="{xen:link members/bdtagme-find}"]]></replace>
+    </modification>
+    <modification template="profile_post" modification_key="bdtagme_profile_post" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#class="[^"]*UserTagger[^"]*"#]]></find>
+      <replace><![CDATA[$0 data-acurl="{xen:link members/bdtagme-find}"]]></replace>
     </modification>
   </public_template_modifications>
   <bb_code_media_sites/>
+  <bb_codes/>
 </addon>

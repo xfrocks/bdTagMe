@@ -1,10 +1,13 @@
 <?php
 
-class bdTagMe_Option {
-	public static function get($key) {
+class bdTagMe_Option
+{
+	public static function get($key)
+	{
 		$options = XenForo_Application::get('options');
-		
-		switch ($key) {
+
+		switch ($key)
+		{
 			case 'max':
 				$visitor = XenForo_Visitor::getInstance();
 				return $visitor->hasPermission('general', 'maxTaggedUsers');
@@ -14,7 +17,8 @@ class bdTagMe_Option {
 				return $visitor->hasPermission('general', 'bdtagme_groupTag');
 				break;
 		}
-		
+
 		return $options->get('bdtagme_' . $key);
 	}
+
 }

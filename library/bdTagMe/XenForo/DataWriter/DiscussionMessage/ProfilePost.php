@@ -2,30 +2,25 @@
 
 class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost
 {
-	protected $_bdTagMe_taggedUsers = array();
-
-	protected function _messagePreSave()
+	protected function _alertUser()
 	{
-		/* @var $taggingModel XenForo_Model_UserTagging */
-		$taggingModel = $this->getModelFromCache('XenForo_Model_UserTagging');
+		// reset _taggedUsers so the default routine will not resend alerts
+		// of course, we kept our copy in local variable $taggedUsers
+		$taggedUsers = $this->_taggedUsers;
+		$this->_taggedUsers = array();
 
-		$this->_bdTagMe_taggedUsers = $taggingModel->getTaggedUsersInMessage($this->get('message'), $newMessage, 'facebookAlike');
-		$this->set('message', $newMessage);
+		$response = parent::_alertUser();
 
-		return parent::_messagePreSave();
-	}
-
-	protected function _postSaveAfterTransaction()
-	{
-		$response = parent::_postSaveAfterTransaction();
-
+		// TODO: check for profile post validity before sending alerts?
+		// currently it is not needed because _alertUser is called only when the post is
+		// valid, maybe it will be required at a later time
 		$engine = bdTagMe_Engine::getInstance();
 		$profilePost = $this->getMergedData();
-
-		$noAlertUserIds = array($this->get('profile_user_id'));
+		$noAlertUserIds = $this->getModelFromCache('XenForo_Model_Alert')->bdTagMe_getAlertedUserIds('profile_post', $profilePost['profile_post_id']);
 		$noEmailUserIds = array();
 
-		$engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'], $profilePost['user_id'], $profilePost['username'], 'tagged', $this->_bdTagMe_taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel());
+		$options = array(bdTagMe_Engine::OPTION_MAX_TAGGED_USERS => $this->getOption(self::OPTION_MAX_TAGGED_USERS));
+		$engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'], $profilePost['user_id'], $profilePost['username'], 'tag', $taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel(), $options);
 
 		return $response;
 	}
