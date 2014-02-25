@@ -6,6 +6,12 @@ class bdTagMe_Helper_Template
 
 	public static function helperSnippetSetup()
 	{
+		if (XenForo_Application::$versionId >= 1030000)
+		{
+			// XenForo 1.3 parse tags similar to us
+			return;
+		}
+		
 		self::$_defaultBodyText = XenForo_Template_Helper_Core::$helperCallbacks['bodytext'];
 		if (self::$_defaultBodyText[0] === 'self')
 		{
