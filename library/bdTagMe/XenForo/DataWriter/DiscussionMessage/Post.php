@@ -24,7 +24,7 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
 				$notifiedUserIds = $forumWatchModel->bdTagMe_getNotifiedUserIds($post);
 
 				$options = array(bdTagMe_Engine::OPTION_MAX_TAGGED_USERS => $this->getOption(self::OPTION_MAX_TAGGED_USERS));
-				$engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag', $this->_taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
+				$engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag', $taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
 			}
 		}
 
