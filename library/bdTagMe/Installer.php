@@ -71,6 +71,11 @@ class bdTagMe_Installer
 
 	private static function installCustomized($existingAddOn, $addOnData)
 	{
+		if (XenForo_Application::$versionId < 1030000 OR XenForo_Application::$versionId >= 1040000)
+		{
+			throw new XenForo_Exception('[bd] Tag Me v3 only works with XenForo 1.3.x');
+		}
+
 		$db = XenForo_Application::getDb();
 
 		if (empty($existingAddOn))
@@ -82,11 +87,6 @@ class bdTagMe_Installer
 				FROM xf_permission_entry
 				WHERE permission_group_id = 'general' AND permission_id = 'cleanSpam'
 			");
-		}
-
-		if (XenForo_Application::$versionId > 1020000)
-		{
-			$db->query("UPDATE `xf_user_alert` SET action = 'tag' WHERE content_type = 'post' AND action = 'tagged'");
 		}
 	}
 
