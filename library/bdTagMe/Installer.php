@@ -88,6 +88,14 @@ class bdTagMe_Installer
 				WHERE permission_group_id = 'general' AND permission_id = 'cleanSpam'
 			");
 		}
+
+		$db->query("UPDATE `xf_user_alert` SET action = 'tag' WHERE content_type = 'post' AND action = 'tagged'");
+		$db->query("UPDATE `xf_user_alert` SET action = 'tag' WHERE content_type = 'profile_post' AND action = 'tagged'");
+		$db->query("UPDATE `xf_user_alert` SET action = 'tag_comment' WHERE content_type = 'profile_post' AND action = 'comment_tagged'");
+
+		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'post_tag' WHERE alert = 'post_tagged'");
+		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'profile_post_tag' WHERE alert = 'profile_post_tagged'");
+		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'profile_post_tag_comment' WHERE alert = 'profile_post_comment_tagged'");
 	}
 
 	private static function uninstallCustomized()
