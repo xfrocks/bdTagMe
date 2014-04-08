@@ -49,6 +49,11 @@ class bdTagMe_XenForo_ControllerPublic_Member extends XFCP_bdTagMe_XenForo_Contr
 
 	public function actionBdtagmeFind()
 	{
+		if (bdTagMe_Option::get('reorder'))
+		{
+			$this->_getUserModel()->bdTagMe_setOrderByMemberActivity(true);
+		}
+
 		$response = parent::actionFind();
 
 		if ($response instanceof XenForo_ControllerResponse_View)
