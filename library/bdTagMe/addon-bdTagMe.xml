@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.0.3" version_id="3060" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.0.4" version_id="3061" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -144,39 +144,6 @@ To stop receiving email, please edit your account preferences:
   <route_prefixes/>
   <style_properties/>
   <templates>
-    <template title="alert_profile_post_comment_tagged" version_id="8" version_string="1.2.3"><![CDATA[<xen:if is="{$user.user_id} == {$content.profile_user_id}">
-	<xen:comment>This is a status</xen:comment>
-	{xen:phrase bdtagme_x_tagged_you_in_a_comment_on_y_status,
-		'username={xen:helper username, $user, 'subject'}',
-		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
-		'receiverUsername={$content.profile_username}'
-	}
-<xen:else />
-	<xen:comment>This is a profile post</xen:comment>
-	{xen:phrase bdtagme_x_tagged_you_in_a_comment_on_y_profile_page,
-		'username={xen:helper username, $user, 'subject'}',
-		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
-		'receiverUsername={$content.profile_username}'
-	}
-</xen:if>]]></template>
-    <template title="alert_profile_post_tagged" version_id="8" version_string="1.2.3"><![CDATA[<xen:if is="{$user.user_id} == {$content.profile_user_id}">
-	<xen:comment>This is a status</xen:comment>
-	{xen:phrase bdtagme_x_tagged_you_in_a_status,
-		'username={xen:helper username, $user, 'subject'}',
-		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"'
-	}
-<xen:elseif is="{$visitor.user_id} == {$content.profile_user_id}" />
-	<xen:comment>This is a profile message on the visitor's profile page.
-		Actually, this will never happen because the profile_post insert
-		alert will be sent first and our alert will be canceled</xen:comment>
-<xen:else />
-	<xen:comment>This is a profile message on someone else's profile page</xen:comment>
-	{xen:phrase bdtagme_x_tagged_you_in_a_post_on_y_profile_page,
-		'username={xen:helper username, $user, 'subject'}',
-		'linkAttributes=href="{xen:link profile-posts, $content}" class="PopupItemLink"',
-		'receiverUsername={xen:helper username, {xen:array 'user_id={$content.profile_user_id}', 'username={$content.profile_username}'}}'
-	}
-</xen:if>]]></template>
     <template title="bdtagme.css" version_id="27" version_string="1.6-dev"><![CDATA[.xenOverlay .bdTagMe_TaggedUserGroupMemberList { max-height: 300px; overflow-y: scroll; }]]></template>
     <template title="bdtagme_account_contact_details_messaging" version_id="52" version_string="1.7.5b"><![CDATA[<xen:if is="{$xenOptions.bdtagme_alertEmail}">
 	<li><label for="ctrl_bdtagme_email"><input type="checkbox" name="bdtagme_email" value="1" id="ctrl_bdtagme_email" {xen:checked '{$visitor.bdtagme_email}'} />
