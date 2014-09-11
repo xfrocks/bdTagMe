@@ -71,14 +71,20 @@ class bdTagMe_Installer
 
 	private static function installCustomized($existingAddOn, $addOnData)
 	{
-		if (XenForo_Application::$versionId < 1030000 OR XenForo_Application::$versionId >= 1040000)
+		if (XenForo_Application::$versionId < 1030000)
 		{
-			throw new XenForo_Exception('[bd] Tag Me v3 only works with XenForo 1.3.x');
+			throw new XenForo_Exception('[bd] Tag Me v3 requires XenForo 1.3.0+.');
 		}
 
 		$db = XenForo_Application::getDb();
+		$effectiveVersionId = 0;
 
-		if (empty($existingAddOn))
+		if (!empty($existingAddOn))
+		{
+			$effectiveVersionId = $existingAddOn['version_id'];
+		}
+
+		if ($effectiveVersionId == 0)
 		{
 			$db->query("
 				INSERT IGNORE INTO xf_permission_entry
@@ -89,13 +95,20 @@ class bdTagMe_Installer
 			");
 		}
 
-		$db->query("UPDATE `xf_user_alert` SET action = 'tag' WHERE content_type = 'post' AND action = 'tagged'");
-		$db->query("UPDATE `xf_user_alert` SET action = 'tag' WHERE content_type = 'profile_post' AND action = 'tagged'");
-		$db->query("UPDATE `xf_user_alert` SET action = 'tag_comment' WHERE content_type = 'profile_post' AND action = 'comment_tagged'");
+		if ($effectiveVersionId > 0 AND $effectiveVersionId < 3062)
+		{
+			$db->query("UPDATE IGNORE `xf_user_alert` SET action = 'tag' WHERE content_type = 'post' AND action = 'tagged'");
+			$db->query("UPDATE IGNORE `xf_user_alert` SET action = 'tag' WHERE content_type = 'profile_post' AND action = 'tagged'");
+			$db->query("UPDATE IGNORE `xf_user_alert` SET action = 'tag_comment' WHERE content_type = 'profile_post' AND action = 'comment_tagged'");
 
-		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'post_tag' WHERE alert = 'post_tagged'");
-		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'profile_post_tag' WHERE alert = 'profile_post_tagged'");
-		$db->query("UPDATE `xf_user_alert_optout` SET alert = 'profile_post_tag_comment' WHERE alert = 'profile_post_comment_tagged'");
+			$db->query("UPDATE IGNORE `xf_user_alert_optout` SET alert = 'post_tag' WHERE alert = 'post_tagged'");
+			$db->query("UPDATE IGNORE `xf_user_alert_optout` SET alert = 'profile_post_tag' WHERE alert = 'profile_post_tagged'");
+			$db->query("UPDATE IGNORE `xf_user_alert_optout` SET alert = 'profile_post_tag_comment' WHERE alert = 'profile_post_comment_tagged'");
+
+			$db->query("DELETE FROM `xf_user_alert_optout` WHERE alert = 'post_tagged'");
+			$db->query("DELETE FROM `xf_user_alert_optout` WHERE alert = 'profile_post_tagged'");
+			$db->query("DELETE FROM `xf_user_alert_optout` WHERE alert = 'profile_post_comment_tagged'");
+		}
 	}
 
 	private static function uninstallCustomized()
