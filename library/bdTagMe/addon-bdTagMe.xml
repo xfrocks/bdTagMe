@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.0.4b" version_id="3062" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.0.5" version_id="3063" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -117,20 +117,10 @@ To stop receiving email, please edit your account preferences:
 
 {board_link}]]></phrase>
     <phrase title="bdtagme_members_count" version_id="27" version_string="1.6-dev"><![CDATA[Members Count]]></phrase>
-    <phrase title="bdtagme_mode_custom" version_id="3" version_string="1.0"><![CDATA[Custom]]></phrase>
-    <phrase title="bdtagme_mode_url" version_id="3" version_string="1.0"><![CDATA[URL]]></phrase>
     <phrase title="bdtagme_receive_email_when_tagged" version_id="41" version_string="1.7"><![CDATA[Receive email when name is mentioned]]></phrase>
     <phrase title="bdtagme_receive_email_when_tagged_explain" version_id="40" version_string="1.6.6"><![CDATA[Email notifications for mentions from threads, replies, profile posts, etc.]]></phrase>
-    <phrase title="bdtagme_someone_tags_you_in_a_comment_on_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone comments on a profile post with you tagged]]></phrase>
-    <phrase title="bdtagme_someone_tags_you_in_a_profile_post" version_id="9" version_string="1.4"><![CDATA[Someone tags you in a profile post]]></phrase>
-    <phrase title="bdtagme_tags_you" version_id="3" version_string="1.0"><![CDATA[Tags you]]></phrase>
-    <phrase title="bdtagme_tags_you_in_a_comment" version_id="9" version_string="1.4"><![CDATA[Tags you in a comment]]></phrase>
     <phrase title="bdtagme_user_group_is_taggable" version_id="25" version_string="1.5.9"><![CDATA[Is taggable]]></phrase>
     <phrase title="bdtagme_user_group_is_taggable_explain" version_id="27" version_string="1.6-dev"><![CDATA[Check this box to allow people to tag this user group's members using @usergroup syntax. Please note that allowing a group to be taggable will make the group member list available for all to see. It's also not recommended to enable this option for groups that have a lot of members.]]></phrase>
-    <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s profile page.]]></phrase>
-    <phrase title="bdtagme_x_tagged_you_in_a_comment_on_y_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>comment</a> on {receiverUsername}'s status.]]></phrase>
-    <phrase title="bdtagme_x_tagged_you_in_a_post_on_y_profile_page" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>post</a> on {receiverUsername}'s profile page.]]></phrase>
-    <phrase title="bdtagme_x_tagged_you_in_a_status" version_id="8" version_string="1.2.3"><![CDATA[{username} tagged you in a <a {linkAttributes}>status</a>.]]></phrase>
     <phrase title="option_bdtagme_alertEmail" version_id="40" version_string="1.6.6"><![CDATA[Send Alert Emails]]></phrase>
     <phrase title="option_bdtagme_alertEmail_explain" version_id="2056" version_string="2.1.0b"><![CDATA[Enable this option to send alert emails in addition to builtin notification system. Users still need to enable the option in /account/contact-details to start receiving emails.]]></phrase>
     <phrase title="option_bdtagme_reorder" version_id="3059" version_string="3.0.2"><![CDATA[Re-order Suggestion]]></phrase>
