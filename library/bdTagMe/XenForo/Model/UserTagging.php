@@ -2,6 +2,46 @@
 
 class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserTagging
 {
+	protected $_bdTagMe_plainReplacements = array();
+
+	public function getTaggedUsersInMessage($message, &$newMessage, $replaceStyle = 'bb')
+	{
+		$filteredMessage = $message;
+		$this->_bdTagMe_plainReplacements = null;
+
+		if ($replaceStyle == 'bb')
+		{
+			$filteredMessage = preg_replace_callback('#\[usergroup=[^\]]*](.*)\[/usergroup]#siU', array(
+				$this,
+				'_bdTagMe_plainReplaceHandler'
+			), $filteredMessage);
+		}
+
+		$response = parent::getTaggedUsersInMessage($filteredMessage, $newMessage, $replaceStyle);
+
+		if ($this->_bdTagMe_plainReplacements)
+		{
+			$newMessage = strtr($newMessage, $this->_bdTagMe_plainReplacements);
+			$this->_bdTagMe_plainReplacements = null;
+		}
+
+		return $response;
+	}
+
+	protected function _bdTagMe_plainReplaceHandler(array $match)
+	{
+		if (!is_array($this->_bdTagMe_plainReplacements))
+		{
+			$this->_bdTagMe_plainReplacements = array();
+		}
+
+		$placeholder = "\x1A_bdTagMe_" . count($this->_bdTagMe_plainReplacements) . "\x1A";
+
+		$this->_bdTagMe_plainReplacements[$placeholder] = $match[0];
+
+		return $placeholder;
+	}
+
 	protected function _getTagMatchUsers(array $matches)
 	{
 		$usersByMatch = parent::_getTagMatchUsers($matches);
