@@ -5,6 +5,7 @@ class bdTagMe_Engine
 	const SIMPLE_CACHE_KEY_TAGGABLE_USER_GROUPS = 'bdTagMe_taggableUserGroups';
 
 	const OPTION_MAX_TAGGED_USERS = 'maxTaggedUsers';
+	const OPTION_USER_CALLBACK = 'userCallback';
 
 	public function notifyTaggedUsers3($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, $taggedUsers, array $noAlertUserIds = array(), array $noEmailUserIds = array(), XenForo_Model $someRandomModel = null, array $options = array())
 	{
@@ -52,9 +53,19 @@ class bdTagMe_Engine
 				$neededUserIds = array_slice($neededUserIds, 0, $options[self::OPTION_MAX_TAGGED_USERS], true);
 			}
 
-			$users = $userModel->getUsersByIds($neededUserIds, array('join' => XenForo_Model_User::FETCH_USER_OPTION | XenForo_Model_User::FETCH_USER_PROFILE,
-				// 'nodeIdPermissions' => $thread['node_id']
-			));
+			$fetchOptions = array();
+			if (!empty($options['users']['fetchOptions']))
+			{
+				$fetchOptions = $options['users']['fetchOptions'];
+			}
+			if (empty($fetchOptions['join']))
+			{
+				$fetchOptions['join'] = 0;
+			}
+			$fetchOptions['join'] |= XenForo_Model_User::FETCH_USER_OPTION;
+			$fetchOptions['join'] |= XenForo_Model_User::FETCH_USER_PROFILE;
+
+			$users = $userModel->getUsersByIds($neededUserIds, $fetchOptions);
 		}
 		else
 		{
@@ -67,6 +78,16 @@ class bdTagMe_Engine
 			{
 				// it's stupid to notify one's self
 				continue;
+			}
+
+			if (!empty($options[self::OPTION_USER_CALLBACK]))
+			{
+				$userCallbackResult = call_user_func($options[self::OPTION_USER_CALLBACK], $userModel, $user, $options);
+				if ($userCallbackResult === false)
+				{
+					// user callback returns false, do not continue
+					continue;
+				}
 			}
 
 			if (!$userModel->isUserIgnored($user, $contentUserId))
