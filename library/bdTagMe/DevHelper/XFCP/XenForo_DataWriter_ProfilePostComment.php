@@ -1,0 +1,5 @@
+<?php
+
+class XFCP_bdTagMe_XenForo_DataWriter_ProfilePostComment extends XenForo_DataWriter_ProfilePostComment
+{
+}

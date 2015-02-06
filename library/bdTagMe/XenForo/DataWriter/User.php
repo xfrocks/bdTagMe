@@ -3,85 +3,74 @@
 class bdTagMe_XenForo_DataWriter_User extends XFCP_bdTagMe_XenForo_DataWriter_User
 {
 
-	protected function _getFields()
-	{
-		$fields = parent::_getFields();
+    protected function _getFields()
+    {
+        $fields = parent::_getFields();
 
-		$fields['xf_user_option']['bdtagme_email'] = array(
-			'type' => self::TYPE_BOOLEAN,
-			'default' => 0
-		);
+        $fields['xf_user_option']['bdtagme_email'] = array(
+            'type' => self::TYPE_BOOLEAN,
+            'default' => 0
+        );
 
-		return $fields;
-	}
+        return $fields;
+    }
 
-	protected function _preSave()
-	{
-		if (isset($GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave']))
-		{
-			$GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave']->bdTagMe_actionContactDetailsSave($this);
-		}
+    protected function _preSave()
+    {
+        if (isset($GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave'])) {
+            /** @var bdTagMe_XenForo_ControllerPublic_Account $controller */
+            $controller = $GLOBALS['bdTagMe_XenForo_ControllerPublic_Account#actionContactDetailsSave'];
 
-		return parent::_preSave();
-	}
+            $controller->bdTagMe_actionContactDetailsSave($this);
+        }
 
-	protected function _postSave()
-	{
-		$changedUserGroupIds = array();
+        parent::_preSave();
+    }
 
-		if ($this->isChanged('user_group_id'))
-		{
-			if ($this->isUpdate())
-			{
-				$changedUserGroupIds[] = $this->getExisting('user_group_id');
-			}
-			$changedUserGroupIds[] = $this->get('user_group_id');
-		}
+    protected function _postSave()
+    {
+        $changedUserGroupIds = array();
 
-		if ($this->isChanged('secondary_group_ids'))
-		{
-			if ($this->isUpdate())
-			{
-				$oldIds = explode(',', $this->getExisting('secondary_group_ids'));
-				$newIds = explode(',', $this->get('secondary_group_ids'));
+        if ($this->isChanged('user_group_id')) {
+            if ($this->isUpdate()) {
+                $changedUserGroupIds[] = $this->getExisting('user_group_id');
+            }
+            $changedUserGroupIds[] = $this->get('user_group_id');
+        }
 
-				foreach ($newIds as $id)
-				{
-					if (!empty($id) AND !in_array($id, $oldIds))
-					{
-						$changedUserGroupIds[] = $id;
-					}
-				}
+        if ($this->isChanged('secondary_group_ids')) {
+            if ($this->isUpdate()) {
+                $oldIds = explode(',', $this->getExisting('secondary_group_ids'));
+                $newIds = explode(',', $this->get('secondary_group_ids'));
 
-				foreach ($oldIds as $id)
-				{
-					if (!empty($id) AND !in_array($id, $newIds))
-					{
-						$changedUserGroupIds[] = $id;
-					}
-				}
-			}
-			else
-			{
-				$ids = explode(',', $this->get('secondary_group_ids'));
-				foreach ($ids as $id)
-				{
-					if (!empty($id))
-					{
-						$changedUserGroupIds[] = $id;
-					}
-				}
-			}
-		}
+                foreach ($newIds as $id) {
+                    if (!empty($id) AND !in_array($id, $oldIds)) {
+                        $changedUserGroupIds[] = $id;
+                    }
+                }
 
-		if (!empty($changedUserGroupIds))
-		{
-			$changedUserGroupIds = array_unique($changedUserGroupIds);
-			$engine = bdTagMe_Engine::getInstance();
-			$engine->updateTaggableUserGroups($changedUserGroupIds, $this);
-		}
+                foreach ($oldIds as $id) {
+                    if (!empty($id) AND !in_array($id, $newIds)) {
+                        $changedUserGroupIds[] = $id;
+                    }
+                }
+            } else {
+                $ids = explode(',', $this->get('secondary_group_ids'));
+                foreach ($ids as $id) {
+                    if (!empty($id)) {
+                        $changedUserGroupIds[] = $id;
+                    }
+                }
+            }
+        }
 
-		return parent::_postSave();
-	}
+        if (!empty($changedUserGroupIds)) {
+            $changedUserGroupIds = array_unique($changedUserGroupIds);
+            $engine = bdTagMe_Engine::getInstance();
+            $engine->updateTaggableUserGroups($changedUserGroupIds, $this);
+        }
+
+        parent::_postSave();
+    }
 
 }
