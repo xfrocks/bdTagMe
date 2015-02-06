@@ -33,28 +33,13 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
                             'nodeIdPermissions' => $thread['node_id'],
                         ),
                     ),
-                    bdTagMe_Engine::OPTION_USER_CALLBACK => array(__CLASS__, 'bdTagMe_Engine_userCallback'),
+                    bdTagMe_Engine::OPTION_USER_CALLBACK => array(
+                        'bdTagMe_UserCallback',
+                        'XenForo_DataWriter_DiscussionMessage_Post'
+                    ),
                 );
                 $engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag', $taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
             }
         }
-    }
-
-    public static function bdTagMe_Engine_userCallback(XenForo_Model_User $userModel, array $user, array $options)
-    {
-        if (empty($user['node_permission_cache'])) {
-            return false;
-        }
-
-        if (empty($options['post']) OR empty($options['thread']) OR empty($options['forum'])) {
-            return false;
-        }
-
-        $permissions = XenForo_Permission::unserializePermissions($user['node_permission_cache']);
-
-        /** @var XenForo_Model_Post $postModel */
-        $postModel = $userModel->getModelFromCache('XenForo_Model_Post');
-
-        return $postModel->canViewPostAndContainer($options['post'], $options['thread'], $options['forum'], $null, $permissions, $user);
     }
 }

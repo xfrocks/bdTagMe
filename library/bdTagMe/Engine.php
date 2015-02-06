@@ -7,7 +7,9 @@ class bdTagMe_Engine
     const OPTION_MAX_TAGGED_USERS = 'maxTaggedUsers';
     const OPTION_USER_CALLBACK = 'userCallback';
 
-    public function notifyTaggedUsers3($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, $taggedUsers, array $noAlertUserIds = array(), array $noEmailUserIds = array(), XenForo_Model $someRandomModel = null, array $options = array())
+    const USERS_PER_BATCH = 100;
+
+    public function notifyTaggedUsers3($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, array $taggedUsers, array $noAlertUserIds = array(), array $noEmailUserIds = array(), XenForo_Model $someRandomModel = null, array $options = array())
     {
         $options = array_merge(array(self::OPTION_MAX_TAGGED_USERS => bdTagMe_Option::get('max')), $options);
 
@@ -39,9 +41,32 @@ class bdTagMe_Engine
         if (!empty($neededUserIds)) {
             if ($options[self::OPTION_MAX_TAGGED_USERS] > 0) {
                 // there are limit of maximum tagged users
-                $neededUserIds = array_slice($neededUserIds, 0, $options[self::OPTION_MAX_TAGGED_USERS], true);
+                $userIds = array_slice($neededUserIds, 0, $options[self::OPTION_MAX_TAGGED_USERS]);
+            } else {
+                $userIds = $neededUserIds;
             }
+        } else {
+            $userIds = array();
+        }
 
+        if (count($userIds) > self::USERS_PER_BATCH) {
+            $deferredUserIds = array_slice($userIds, self::USERS_PER_BATCH);
+            $userIds = array_slice($userIds, 0, self::USERS_PER_BATCH);
+
+            XenForo_Application::defer('bdTagMe_Deferred_NotifyUserIds', array(
+                $contentType, $contentId, $contentUserId, $contentUserName, $alertAction,
+                $deferredUserIds,
+                $noAlertUserIds, $noEmailUserIds,
+                $options
+            ));
+        }
+
+        return $this->notifyUserIds($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, $userIds, $noAlertUserIds, $noEmailUserIds, $userModel, $options);
+    }
+
+    public function notifyUserIds($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, array $userIds, array $noAlertUserIds, array $noEmailUserIds, XenForo_Model_User $userModel, array $options)
+    {
+        if (!empty($userIds)) {
             $fetchOptions = array();
             if (!empty($options['users']['fetchOptions'])) {
                 $fetchOptions = $options['users']['fetchOptions'];
@@ -52,7 +77,7 @@ class bdTagMe_Engine
             $fetchOptions['join'] |= XenForo_Model_User::FETCH_USER_OPTION;
             $fetchOptions['join'] |= XenForo_Model_User::FETCH_USER_PROFILE;
 
-            $users = $userModel->getUsersByIds($neededUserIds, $fetchOptions);
+            $users = $userModel->getUsersByIds($userIds, $fetchOptions);
         } else {
             $users = array();
         }
