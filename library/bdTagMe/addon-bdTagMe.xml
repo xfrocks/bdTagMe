@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.1.0" version_id="3065" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
+<addon addon_id="bdTagMe" title="[bd] Tag Me" version_string="3.2.0" version_id="3066" url="" install_callback_class="bdTagMe_Installer" install_callback_method="install" uninstall_callback_class="bdTagMe_Installer" uninstall_callback_method="uninstall">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -29,13 +29,22 @@ $0]]></replace>
   <code_event_listeners>
     <listener event_id="file_health_check" execute_order="10" callback_class="bdTagMe_Listener" callback_method="file_health_check" active="1" hint="" description=""/>
     <listener event_id="init_dependencies" execute_order="10" callback_class="bdTagMe_Listener" callback_method="init_dependencies" active="1" hint="" description=""/>
-    <listener event_id="load_class_bb_code" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="" description=""/>
-    <listener event_id="load_class_controller" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="" description=""/>
-    <listener event_id="load_class_datawriter" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="" description=""/>
-    <listener event_id="load_class_model" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="" description=""/>
-    <listener event_id="load_class_route_prefix" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="" description=""/>
-    <listener event_id="template_create" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_create" active="1" hint="" description=""/>
-    <listener event_id="template_hook" execute_order="10" callback_class="bdTagMe_Listener" callback_method="template_hook" active="1" hint="" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_BbCode_Formatter_Base" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_BbCode_Formatter_HtmlEmail" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_BbCode_Formatter_Text" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerAdmin_UserGroup" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Account" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_ControllerPublic_Member" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_DiscussionMessage_Post" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_DiscussionMessage_ProfilePost" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_ProfilePostComment" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_User" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_DataWriter_UserGroup" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_Model_Alert" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_Model_ForumWatch" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_Model_User" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_Model_UserTagging" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="bdTagMe_Listener" callback_method="load_class" active="1" hint="XenForo_Route_Prefix_Members" description=""/>
   </code_event_listeners>
   <cron/>
   <email_templates>
@@ -173,6 +182,11 @@ To stop receiving email, please edit your account preferences:
     <modification template="profile_post" modification_key="bdtagme_profile_post" description="Use our action for auto complete data source (to support user group tagging)" execution_order="10" enabled="1" action="preg_replace">
       <find><![CDATA[#class="[^"]*UserTagger[^"]*"#]]></find>
       <replace><![CDATA[$0 data-acurl="{xen:link members/bdtagme-find}"]]></replace>
+    </modification>
+    <modification template="account_contact_details" modification_key="dbtagme_account_contact_details" description="" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#(<xen:hook name="account_contact_details_messaging".*?)(\s*)(</xen:hook>)#si]]></find>
+      <replace><![CDATA[$1$2<xen:include template="bdtagme_account_contact_details_messaging"/>
+$2$3]]></replace>
     </modification>
   </public_template_modifications>
   <bb_code_media_sites/>
