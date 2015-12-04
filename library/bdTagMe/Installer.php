@@ -102,7 +102,7 @@ class bdTagMe_Installer
 
     private static function uninstallCustomized()
     {
-        // customized uninstall script goes here
+        bdTagMe_ShippableHelper_Updater::onUninstall(bdTagMe_Option::UPDATER_URL);
     }
 
 }

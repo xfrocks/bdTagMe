@@ -37,6 +37,7 @@ class bdTagMe_Listener
     public static function init_dependencies(XenForo_Dependencies_Abstract $dependencies, array $data)
     {
         bdTagMe_Helper_Template::helperSnippetSetup();
+        bdTagMe_ShippableHelper_Updater::onInitDependencies($dependencies, bdTagMe_Option::UPDATER_URL);
     }
 
     public static function template_create($templateName, array &$params, XenForo_Template_Abstract $template)
