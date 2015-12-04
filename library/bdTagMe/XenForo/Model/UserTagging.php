@@ -57,23 +57,24 @@ class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserT
                 $userGroupTitlesToLower[$taggableUserGroup['user_group_id']] = utf8_strtolower($taggableUserGroup['title']);
             }
 
-            uasort($userGroupTitlesToLower, array(
-                __CLASS__,
-                'sortByLengthLongerFirst'
-            ));
-
+            $changedMatchKeys = array();
             foreach ($userGroupTitlesToLower as $userGroupId => $userGroupTitleToLower) {
                 foreach ($matchesToLower as $matchKey => $matchToLower) {
                     if (strpos($userGroupTitleToLower, $matchToLower) === 0) {
                         $userGroupInfo = array(
                             'user_id' => 'ug_' . $userGroupId,
                             'username' => $taggableUserGroups[$userGroupId]['title'],
-                            'lower' => strtolower($taggableUserGroups[$userGroupId]['title']),
+                            'lower' => $userGroupTitleToLower,
                             'user_group_id' => $userGroupId,
                         );
                         $usersByMatch[$matchKey][$userGroupInfo['user_id']] = $userGroupInfo;
+                        $changedMatchKeys[$matchKey] = true;
                     }
                 }
+            }
+
+            foreach (array_keys($changedMatchKeys) as $matchKey) {
+                uasort($usersByMatch[$matchKey], array(__CLASS__, 'sortByLowerLength'));
             }
         }
 
@@ -99,9 +100,16 @@ class bdTagMe_XenForo_Model_UserTagging extends XFCP_bdTagMe_XenForo_Model_UserT
         return parent::_replaceTagUserMatch($user, $replaceStyle);
     }
 
-    public static function sortByLengthLongerFirst($a, $b)
+    public static function sortByLowerLength($a, $b)
     {
-        return strlen($a) < strlen($b) ? 1 : -1;
+        $aLen = strlen($a['lower']);
+        $bLen = strlen($b['lower']);
+
+        if ($aLen === $bLen) {
+            return 0;
+        } else {
+            return $aLen < $bLen ? 1 : -1;
+        }
     }
 
 }
