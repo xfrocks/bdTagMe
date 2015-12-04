@@ -38,7 +38,8 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_Post extends XFCP_bdTagMe_Xen
                         'XenForo_DataWriter_DiscussionMessage_Post'
                     ),
                 );
-                $engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag', $taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
+                $engine->notifyTaggedUsers3('post', $post['post_id'], $post['user_id'], $post['username'], 'tag',
+                    $taggedUsers, $notifiedUserIds['alerted'], $notifiedUserIds['emailed'], $forumWatchModel, $options);
             }
         }
     }

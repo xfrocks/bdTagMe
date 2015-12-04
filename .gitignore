@@ -2,3 +2,4 @@
 *.devhelper
 library/bdTagMe/DevHelper/Generated
 library/bdTagMe/FileSums.php
+library/bdTagMe/DevHelper/XFCP

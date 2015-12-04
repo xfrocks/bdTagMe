@@ -1,6 +1,7 @@
 <?php
 
-class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost
+class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost
+    extends XFCP_bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost
 {
     protected function _alertUser()
     {
@@ -23,7 +24,9 @@ class bdTagMe_XenForo_DataWriter_DiscussionMessage_ProfilePost extends XFCP_bdTa
         $noEmailUserIds = array();
 
         $options = array(bdTagMe_Engine::OPTION_MAX_TAGGED_USERS => $this->getOption(self::OPTION_MAX_TAGGED_USERS));
-        $engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'], $profilePost['user_id'], $profilePost['username'], 'tag', $taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel(), $options);
+        $engine->notifyTaggedUsers3('profile_post', $profilePost['profile_post_id'],
+            $profilePost['user_id'], $profilePost['username'], 'tag',
+            $taggedUsers, $noAlertUserIds, $noEmailUserIds, $this->_getProfilePostModel(), $options);
 
         return $response;
     }

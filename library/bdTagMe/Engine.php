@@ -9,7 +9,10 @@ class bdTagMe_Engine
 
     const USERS_PER_BATCH = 100;
 
-    public function notifyTaggedUsers3($contentType, $contentId, $contentUserId, $contentUserName, $alertAction, array $taggedUsers, array $noAlertUserIds = array(), array $noEmailUserIds = array(), XenForo_Model $someRandomModel = null, array $options = array())
+    public function notifyTaggedUsers3(
+        $contentType, $contentId, $contentUserId, $contentUserName, $alertAction,
+        array $taggedUsers, array $noAlertUserIds = array(), array $noEmailUserIds = array(),
+        XenForo_Model $someRandomModel = null, array $options = array())
     {
         $options = array_merge(array(self::OPTION_MAX_TAGGED_USERS => bdTagMe_Option::get('max')), $options);
 
